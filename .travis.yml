@@ -1,0 +1,19 @@
+services:
+  - docker
+
+before_script:
+  - echo "$TRAVIS_TAG" "$TRAVIS_COMMIT"
+  - export SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c -7)
+
+script:
+  - docker build -t "phema/phema-workbench-app:${TRAVIS_TAG:-$SHORT_COMMIT_HASH}" --build-arg VCS_REF="${TRAVIS_TAG:-$SHORT_COMMIT_HASH}" .
+
+after_script:
+  - docker images
+
+deploy:
+  provider: script
+  script: bash ./deployment/docker-deploy.sh
+  skip_cleanup: true
+  on:
+    tags: true
