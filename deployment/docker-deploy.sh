@@ -6,7 +6,7 @@ echo "$DOCKERHUB_API_KEY" | docker login -u "$DOCKERHUB_USERNAME" --password-std
 set -o xtrace
 
 # Push the image
-docker push phema/phema-workbench-api:$TRAVIS_TAG
+docker push phema/phema-workbench-app:$TRAVIS_TAG
 
 # Notify to slack
 SLACK_MESSAGE="New PhEMA Workbench App <https://hub.docker.com/r/phema/phema-workbench-app|Docker image> published ($TRAVIS_TAG)"
