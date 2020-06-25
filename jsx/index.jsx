@@ -7,10 +7,10 @@ import App from "./containers/app/App.jsx";
 
 localForage.config({
   driver: localForage.LOCALSTORAGE,
-  name: "phex-local"
+  name: "phex-local",
 });
 
-class PhEx extends React.Component {
+class PhemaWorkbench extends React.Component {
   render() {
     return (
       <Provider store={store}>
@@ -20,4 +20,4 @@ class PhEx extends React.Component {
   }
 }
 
-export default PhEx;
+export default PhemaWorkbench;

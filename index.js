@@ -3,6 +3,9 @@ import ReactDOM from "react-dom";
 
 import "./styles/index.scss";
 
-import PhEx from "./jsx";
+import PhemaWorkbench from "./jsx";
 
-ReactDOM.render(<PhEx />, document.getElementById("phex"));
+ReactDOM.render(
+  <PhemaWorkbench />,
+  document.getElementById("phema-workbench-api")
+);
