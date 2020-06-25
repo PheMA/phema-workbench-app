@@ -6,7 +6,7 @@ import uuid from "uuid/v4";
 import * as CqlMonarch from "./monarch-cql";
 
 const defaultCQL = () => {
-  return `using QUICK
+  return `using FHIR version '4.0.0'
 
 valueset "Diabetes": '2.16.840.1.113883.3.464.1003.103.12.1001'
 
@@ -21,9 +21,11 @@ class CqlEditor extends React.Component {
   componentDidMount() {
     this.initMonaco();
 
-    document.getElementById("phexMain").addEventListener("phex-resized", () => {
-      this.editor.layout();
-    });
+    document
+      .getElementById("phemaWorkbenchMain")
+      .addEventListener("phema-workbench-resized", () => {
+        this.editor.layout();
+      });
 
     // Save the initial value
     this.props.saveLibrary(this.props.scriptId, this.editor.getValue());
@@ -39,9 +41,9 @@ class CqlEditor extends React.Component {
     monaco.languages.setMonarchTokensProvider("cql", CqlMonarch);
 
     self.MonacoEnvironment = {
-      getWorkerUrl: function(moduleId, label) {
+      getWorkerUrl: function (moduleId, label) {
         return "./editor.worker.js";
-      }
+      },
     };
 
     const content = this.props.library ? this.props.library : defaultCQL();
@@ -50,7 +52,7 @@ class CqlEditor extends React.Component {
       document.getElementById(`cqlEditor__container-${this.containerId}`),
       {
         value: content,
-        language: "cql"
+        language: "cql",
       }
     );
 

@@ -1,33 +1,33 @@
 import React, { useState } from "react";
 import SplitPane from "react-split-pane";
 
-import PhEx from "../../../api/phex";
+import PhemaWorkbenchApi from "../../../api/phema-workbench";
 import { CqlEditor } from "./cql-editor";
 import { Header, CqlResult } from "./";
 
-const execute = (setResult, connections, library) => connectionId => {
-  const connection = connections.cql.find(conn => conn.id == connectionId);
+const execute = (setResult, connections, library) => (connectionId) => {
+  const connection = connections.cql.find((conn) => conn.id == connectionId);
 
-  const phexApi = new PhEx();
+  const phemaWorkbenchApi = new PhemaWorkbenchApi();
 
   const body = {};
 
   body[connection.codeProperty] = library;
-  connection.otherProps.forEach(prop => {
+  connection.otherProps.forEach((prop) => {
     body[prop.name] = prop.value;
   });
 
-  phexApi
+  phemaWorkbenchApi
     .run(connection.url, body, { "Content-Type": "application/json" })
-    .then(result => {
+    .then((result) => {
       setResult(result);
     })
-    .catch(e => {
+    .catch((e) => {
       console.log("Error", e);
     });
 };
 
-const CqlWindow = props => {
+const CqlWindow = (props) => {
   //console.log("Window", props);
 
   const { scriptId, resized, connections, saveLibrary, library } = props;

@@ -1,9 +1,9 @@
 import React from "react";
 
-const Welcome = props => (
+const Welcome = (props) => (
   <div className="welcome">
     <span className="welcome__title">
-      <h2>Welcome to the PhEMA Phenotype Executer (PhEx)</h2>
+      <h2>Welcome to the PhEMA Workbench</h2>
     </span>
     <div>
       There are a few things you can do to get started running a phenotype:

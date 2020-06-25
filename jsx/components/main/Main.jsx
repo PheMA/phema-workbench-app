@@ -6,16 +6,18 @@ import Details from "../details/Details.jsx";
 import ExecutionLog from "../log/ExecutionLog";
 
 const resized = () => {
-  document.getElementById("phexMain").dispatchEvent(new Event("phex-resized"));
+  document
+    .getElementById("phemaWorkbenchMain")
+    .dispatchEvent(new Event("phema-workbench-resized"));
 };
 
-const Main = props => {
+const Main = (props) => {
   const { localForage, cqlScripts, selectedTab, saveLibrary } = props;
 
   const [connections, setConnections] = useState([]);
 
   return (
-    <div id="phexMain" className="main">
+    <div id="phemaWorkbenchMain" className="main">
       <SplitPane
         split="vertical"
         defaultSize={"25%"}

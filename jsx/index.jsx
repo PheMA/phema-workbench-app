@@ -7,7 +7,7 @@ import App from "./containers/app/App.jsx";
 
 localForage.config({
   driver: localForage.LOCALSTORAGE,
-  name: "phex-local",
+  name: "phema-workbench-local",
 });
 
 class PhemaWorkbench extends React.Component {

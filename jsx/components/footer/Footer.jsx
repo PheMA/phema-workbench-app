@@ -1,6 +1,6 @@
 import React from "react";
 
-const PhExFooter = () => (
+const PhemaWorkbenchFooter = () => (
   <div className="footer">
     <div className="footer__text">
       PHEMA {`${new Date().getFullYear()} `}
@@ -13,4 +13,4 @@ const PhExFooter = () => (
   </div>
 );
 
-export default PhExFooter;
+export default PhemaWorkbenchFooter;

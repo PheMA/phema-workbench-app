@@ -5,7 +5,4 @@ import "./styles/index.scss";
 
 import PhemaWorkbench from "./jsx";
 
-ReactDOM.render(
-  <PhemaWorkbench />,
-  document.getElementById("phema-workbench-api")
-);
+ReactDOM.render(<PhemaWorkbench />, document.getElementById("phema-workbench"));

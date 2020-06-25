@@ -1,7 +1,7 @@
-const PHEX_DEFAULT_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v1`;
+const PHEMA_WORKBENCH_DEFAULT_API_URL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/api/v1`;
 
-class PhEx {
-  constructor(baseUrl = PHEX_DEFAULT_BASE_URL) {
+class PhemaWorkbenchApi {
+  constructor(baseUrl = PHEMA_WORKBENCH_DEFAULT_API_URL) {
     this._baseUrl = baseUrl;
   }
 
@@ -21,11 +21,11 @@ class PhEx {
   }
 
   async getPhenotypeList() {
-    return this.get(`${this.baseUrl}/phenotype`).then(res => res.json());
+    return this.get(`${this.baseUrl}/phenotype`).then((res) => res.json());
   }
 
   async run(url, body, headers) {
-    return this.post(url, body, headers).then(async res => {
+    return this.post(url, body, headers).then(async (res) => {
       let body, type;
       if (res.headers.get("Content-Type") === "application/json") {
         body = await res.json();
@@ -45,7 +45,7 @@ class PhEx {
         if (!res.ok) {
           body = {
             status: res.status,
-            statusText: res.statusText
+            statusText: res.statusText,
           };
         }
       }
@@ -53,7 +53,7 @@ class PhEx {
       return {
         ok: res.ok,
         type,
-        body
+        body,
       };
     });
   }
@@ -62,15 +62,15 @@ class PhEx {
     return fetch(url, {
       method: "POST",
       body: JSON.stringify(body),
-      headers
+      headers,
     });
   }
 
   async get(url, headers) {
     return fetch(url, {
-      headers
+      headers,
     });
   }
 }
 
-export default PhEx;
+export default PhemaWorkbenchApi;

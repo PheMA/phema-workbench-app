@@ -2,15 +2,15 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import {
   FETCH_PHENOTYPE_LIST,
   fetchPhenotypeListSuccess,
-  fetchPhenotypeListFailed
+  fetchPhenotypeListFailed,
 } from "./actions";
-import PhEx from "../../api/phex";
+import PhemaWorkbenchApi from "../../api/phema-workbench";
 
-const phex = new PhEx();
+const phemaWorkbenchApi = new PhemaWorkbenchApi();
 
 function* fetchPhenotypeList() {
   try {
-    const phenotypes = yield phex.getPhenotypeList();
+    const phenotypes = yield phemaWorkbenchApi.getPhenotypeList();
     yield put(fetchPhenotypeListSuccess(phenotypes));
   } catch (err) {
     console.log(err);
