@@ -5,17 +5,30 @@ import PhemaWorkbenchApi from "../../../api/phema-workbench";
 import { CqlEditor } from "./cql-editor";
 import { Header, CqlResult } from "./";
 
+const buildParametersResource = (params) => {
+  let resource = {
+    resourceType: "Parameters",
+    parameter: [],
+  };
+
+  params.forEach((param) => {
+    resource.parameter.push({
+      name: param.name,
+      valueString: param.value,
+    });
+  });
+
+  return resource;
+};
+
 const execute = (setResult, connections, library) => (connectionId) => {
   const connection = connections.cql.find((conn) => conn.id == connectionId);
 
   const phemaWorkbenchApi = new PhemaWorkbenchApi();
 
-  const body = {};
+  const params = [{ name: "code", value: library }, ...connection.otherProps];
 
-  body[connection.codeProperty] = library;
-  connection.otherProps.forEach((prop) => {
-    body[prop.name] = prop.value;
-  });
+  const body = buildParametersResource(params);
 
   phemaWorkbenchApi
     .run(connection.url, body, { "Content-Type": "application/json" })
@@ -28,8 +41,6 @@ const execute = (setResult, connections, library) => (connectionId) => {
 };
 
 const CqlWindow = (props) => {
-  //console.log("Window", props);
-
   const { scriptId, resized, connections, saveLibrary, library } = props;
 
   const [result, setResult] = useState(undefined);

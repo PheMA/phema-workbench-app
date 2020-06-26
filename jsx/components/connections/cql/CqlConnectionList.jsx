@@ -4,10 +4,10 @@ import {
   Icon,
   HTMLTable,
   Popover,
-  PopoverInteractionKind
+  PopoverInteractionKind,
 } from "@blueprintjs/core";
 
-const CqlConnectionSummary = props => {
+const CqlConnectionSummary = (props) => {
   const { connection } = props;
 
   const propertyRows = connection.otherProps.map((prop, index) => (
@@ -22,18 +22,14 @@ const CqlConnectionSummary = props => {
       <HTMLTable>
         <thead>
           <tr>
-            <th>Property</th>
+            <th>Parameter</th>
             <th>Value</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Server URL</td>
+            <td>Connection URL</td>
             <td>{connection.url}</td>
-          </tr>
-          <tr>
-            <td>Code property</td>
-            <td>{connection.codeProperty}</td>
           </tr>
           {propertyRows}
         </tbody>
@@ -42,7 +38,7 @@ const CqlConnectionSummary = props => {
   );
 };
 
-const CqlConnectionListItem = props => {
+const CqlConnectionListItem = (props) => {
   const { connection, index } = props;
 
   const displayName = connection.name || connection.url;
@@ -63,7 +59,7 @@ const CqlConnectionListItem = props => {
   );
 };
 
-const CqlConnectionList = props => {
+const CqlConnectionList = (props) => {
   const { connections } = props;
 
   return connections.map((connection, index) => (

@@ -7,7 +7,7 @@ import {
   ControlGroup,
   Intent,
   FormGroup,
-  InputGroup
+  InputGroup,
 } from "@blueprintjs/core";
 
 import uuid from "uuid/v4";
@@ -20,8 +20,8 @@ const otherProperty = (prop, index, removeProp, cqlConfig, setCqlConfig) => {
           id={`${prop.id}-name`}
           placeholder="Property name"
           value={prop.name}
-          onChange={e => {
-            const thisProp = cqlConfig.otherProps.find(p => p.id === prop.id);
+          onChange={(e) => {
+            const thisProp = cqlConfig.otherProps.find((p) => p.id === prop.id);
             thisProp.name = e.target.value;
             setCqlConfig(Object.assign({}, cqlConfig));
           }}
@@ -32,8 +32,8 @@ const otherProperty = (prop, index, removeProp, cqlConfig, setCqlConfig) => {
           id={`${prop.id}-value`}
           placeholder="Property value"
           value={prop.value}
-          onChange={e => {
-            const thisProp = cqlConfig.otherProps.find(p => p.id === prop.id);
+          onChange={(e) => {
+            const thisProp = cqlConfig.otherProps.find((p) => p.id === prop.id);
             thisProp.value = e.target.value;
             setCqlConfig(Object.assign({}, cqlConfig));
           }}
@@ -46,23 +46,23 @@ const otherProperty = (prop, index, removeProp, cqlConfig, setCqlConfig) => {
   );
 };
 
-const validConfig = cqlConfig => {
+const validConfig = (cqlConfig) => {
   let valid = !!cqlConfig.url && !!cqlConfig.codeProperty;
 
-  cqlConfig.otherProps.forEach(prop => {
+  cqlConfig.otherProps.forEach((prop) => {
     valid = valid && !!prop.name && !!prop.value;
   });
 
   return valid;
 };
 
-const AddCqlConnection = props => {
+const AddCqlConnection = (props) => {
   const [cqlConfig, setCqlConfig] = useState({
     name: "",
     id: uuid(),
     url: "",
     codeProperty: "code",
-    otherProps: []
+    otherProps: [],
   });
 
   const { setModalOpen, saveConfig } = props;
@@ -80,7 +80,7 @@ const AddCqlConnection = props => {
             id="cql-evaluate-url"
             placeholder="Connection name"
             value={cqlConfig.name}
-            onChange={event => {
+            onChange={(event) => {
               setCqlConfig(
                 Object.assign({}, cqlConfig, { name: event.target.value })
               );
@@ -96,9 +96,9 @@ const AddCqlConnection = props => {
         >
           <InputGroup
             id="cql-evaluate-url"
-            placeholder="http://cql.dataphoria.org/cql/evaluate"
+            placeholder="http://workbench.phema.science/fhir/$cql"
             value={cqlConfig.url}
-            onChange={event => {
+            onChange={(event) => {
               setCqlConfig(
                 Object.assign({}, cqlConfig, { url: event.target.value })
               );
@@ -107,34 +107,15 @@ const AddCqlConnection = props => {
         </FormGroup>
 
         <FormGroup
-          helperText="The JSON property containing the CQL source"
-          label="Code Property"
-          labelFor="cql-code-property"
-          labelInfo="(required)"
-        >
-          <InputGroup
-            id="cql-code-property"
-            value="code"
-            onChange={event => {
-              setCqlConfig(
-                Object.assign({}, cqlConfig, {
-                  codeProperty: event.target.value
-                })
-              );
-            }}
-          />
-        </FormGroup>
-
-        <FormGroup
-          helperText="Other fields to include in the JSON payload"
-          label="Other Properties"
+          helperText="Other parameters to include in the Parameters resource"
+          label="Additional Parameters"
           labelInfo="(optional)"
         >
           {cqlConfig.otherProps.map((prop, index) =>
             otherProperty(
               prop,
               index,
-              idx => {
+              (idx) => {
                 cqlConfig.otherProps.splice(idx, 1);
                 setCqlConfig(Object.assign({}, cqlConfig));
               },

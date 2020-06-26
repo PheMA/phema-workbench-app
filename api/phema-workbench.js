@@ -27,7 +27,11 @@ class PhemaWorkbenchApi {
   async run(url, body, headers) {
     return this.post(url, body, headers).then(async (res) => {
       let body, type;
-      if (res.headers.get("Content-Type") === "application/json") {
+
+      if (
+        res.headers.get("Content-Type") === "application/json" ||
+        res.headers.get("Content-Type").includes("application/fhir+json")
+      ) {
         body = await res.json();
         type = "json";
       } else {

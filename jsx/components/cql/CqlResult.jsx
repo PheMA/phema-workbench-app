@@ -5,7 +5,7 @@ import { NonIdealState } from "@blueprintjs/core";
 
 import SqlResult from "./SqlResult";
 
-const CqlResult = props => {
+const CqlResult = (props) => {
   const { result } = props;
 
   if (result == undefined) {
