@@ -4,7 +4,7 @@ services:
 before_script:
   - echo "$TRAVIS_TAG" "$TRAVIS_COMMIT"
   - export SHORT_COMMIT_HASH=$(echo $TRAVIS_COMMIT | cut -c -7)
-  - export FOOTER_FILE_PATH=./jsx/components/footer/Footer.jsx
+  - export FOOTER_FILE_PATH=./packages/workbench-app/src/jsx/components/footer/Footer.jsx
   - if [ -z $TRAVIS_TAG ]; then sed -i "s/__VERSION__/$SHORT_COMMIT_HASH/g" $FOOTER_FILE_PATH; else sed -i "s/__VERSION__/v$TRAVIS_TAG/g" $FOOTER_FILE_PATH; fi
 
 script:

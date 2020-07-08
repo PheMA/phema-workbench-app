@@ -28,7 +28,7 @@
     "prism-react-renderer": "^1.0.2",
     "prop-types": "^15.6.2",
     "react": "^16.13.1",
-    "react-dom": "^15.3.0 || 16",
+    "react-dom": "^16.4.2",
     "react-dropzone": "^v10.1.4",
     "react-json-view": "^1.19.1",
     "react-redux": "^6.0.0",
