@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Gets CodeSystems out of Bundle 1`] = `
+Array [
+  Object {
+    "content": "complete",
+    "date": "2017-09-27T00:00:00-04:00",
+    "id": "ActCode",
+    "identifier": Object {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:2.16.840.1.113883.5.4",
+    },
+    "meta": Object {
+      "lastUpdated": "2017-11-20T00:00:00.000-05:00",
+      "versionId": "3244932127",
+    },
+    "name": "ActCode",
+    "resourceType": "CodeSystem",
+    "text": Object {
+      "div": "<div xmlns=\\"http://www.w3.org/1999/xhtml\\"><h2>ActCode</h2><p>This code system http://hl7.org/fhir/v3/ActCode defines the following codes:</p><table class=\\"codes\\"><tr><td><b>Code</b></td><td><b>Definition</b></td></tr></table></div>",
+      "status": "generated",
+    },
+    "title": "ActCode",
+    "url": "http://hl7.org/fhir/v3/ActCode",
+    "version": "HL7V3.0_2017-07",
+  },
+  Object {
+    "content": "complete",
+    "date": "2019-12-27T00:00:00-05:00",
+    "id": "ActCode",
+    "identifier": Object {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:2.16.840.1.113883.5.4",
+    },
+    "meta": Object {
+      "lastUpdated": "2020-01-16T00:00:00.000-05:00",
+      "versionId": "1333212229",
+    },
+    "name": "ActCode",
+    "resourceType": "CodeSystem",
+    "text": Object {
+      "div": "<div xmlns=\\"http://www.w3.org/1999/xhtml\\"><h2>ActCode</h2><p>This code system http://hl7.org/fhir/v3/ActCode defines the following codes:</p><table class=\\"codes\\"><tr><td><b>Code</b></td><td><b>Definition</b></td></tr></table></div>",
+      "status": "generated",
+    },
+    "title": "ActCode",
+    "url": "http://hl7.org/fhir/v3/ActCode",
+    "version": "HL7V3.0_2019-12",
+  },
+]
+`;

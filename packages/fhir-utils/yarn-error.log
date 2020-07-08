@@ -1,0 +1,47 @@
+Arguments: 
+  /Users/psbrandt/.nvm/versions/node/v12.16.1/bin/node /Users/psbrandt/.nvm/versions/node/v12.16.1/bin/yarn ts-jest config:in
+
+PATH: 
+  /Users/psbrandt/.nvm/versions/node/v12.16.1/bin:/usr/local/anaconda3/bin:/usr/local/anaconda3/condabin:/Users/psbrandt/.jenv/shims:/Users/psbrandt/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/opt/X11/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/psbrandt/workspace/fend/bin:/usr/local/anaconda3/bin:/Users/psbrandt/workspace/covid-19/flutter/bin
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.16.1
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/psbrandt/workspace/phema-workbench-app/packages/fhir-utils/package.json: Unexpected token } in JSON at position 321
+      at JSON.parse (<anonymous>)
+      at /Users/psbrandt/.nvm/versions/node/v12.16.1/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/Users/psbrandt/.nvm/versions/node/v12.16.1/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /Users/psbrandt/.nvm/versions/node/v12.16.1/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "@phema/fhir-utils",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "license": "MIT",
+    "scripts": {
+      "test": "jest"
+    },
+    "devDependencies": {
+      "@ahryman40k/ts-fhir-types": "^4.0.32",
+      "@types/jest": "^26.0.4",
+      "jest": "^26.1.0",
+      "ts-jest": "^26.1.1",
+      "typescript": "^3.9.6"
+    }
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

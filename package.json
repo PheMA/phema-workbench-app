@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "start": "yarn --cwd packages/workbench-app start",
-    "build": "yarn --cwd packages/workbench-app build"
+    "build": "yarn --cwd packages/workbench-app build",
+    "test": "yarn --cwd packages/fhir-utils test"
   }
 }
