@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import SplitPane from "react-split-pane";
 
 import PhemaWorkbenchApi from "../../../api/phema-workbench";
-import { CqlEditor } from "./cql-editor";
-import { Header, CqlResult } from "./";
+import { CqlEditor } from "@phema/cql-editor";
+import { Header, CqlResult } from ".";
 
 const buildParametersResource = (params) => {
   let resource = {

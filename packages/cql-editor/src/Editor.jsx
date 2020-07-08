@@ -5,6 +5,8 @@ import uuid from "uuid/v4";
 
 import * as CqlMonarch from "./monarch-cql";
 
+import "./styles.scss";
+
 const defaultCQL = () => {
   return `using FHIR version '4.0.0'
 

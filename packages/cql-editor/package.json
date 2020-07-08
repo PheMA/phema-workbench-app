@@ -1,0 +1,10 @@
+{
+  "name": "@phema/cql-editor",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "author": "PhEMA Collaborators",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "monaco-editor": "^0.20.0"
+  }
+}

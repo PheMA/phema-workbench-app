@@ -1,4 +1,6 @@
-import "@babel/polyfill";
+import "core-js";
+import "regenerator-runtime/runtime.js";
+
 import localForage from "localforage";
 import React from "react";
 import { Provider } from "react-redux";

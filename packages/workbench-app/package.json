@@ -1,0 +1,46 @@
+{
+  "name": "@phema/workbench-app",
+  "version": "0.1.0",
+  "description": "PhEMA Workbench App",
+  "scripts": {
+    "start": "yarn run build:worker && parcel serve --port 8989 --log-level verbose ./index.html",
+    "watch": "parcel --port 8989 watch index.html",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "yarn run build:worker && parcel build --no-scope-hoist index.html",
+    "build:worker": "parcel build --no-scope-hoist ../../node_modules/monaco-editor/esm/vs/editor/editor.worker.js --no-source-maps"
+  },
+  "author": "PhEMA Collaborators",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/core": "^7",
+    "@blueprintjs/core": "^3.29.0",
+    "@blueprintjs/icons": "^3.19.0",
+    "@blueprintjs/select": "^3.13.4",
+    "@phema/cql-editor": "^1.0.0",
+    "core-js": "^3.6.5",
+    "es6-shim": "^0.35.4",
+    "jsoneditor": "^7.1.0",
+    "jsoneditor-react": "^2.0.0",
+    "localforage": "^1.7.3",
+    "lodash": "^4.17.13",
+    "moment": "^2.23.0",
+    "numeral": "^2.0.6",
+    "prism-react-renderer": "^1.0.2",
+    "prop-types": "^15.6.2",
+    "react": "^16.13.1",
+    "react-dom": "^15.3.0 || 16",
+    "react-dropzone": "^v10.1.4",
+    "react-json-view": "^1.19.1",
+    "react-redux": "^6.0.0",
+    "react-split-pane": "^0.1.84",
+    "recoil": "^0.0.10",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0",
+    "regenerator-runtime": "^0.13.5",
+    "uui": "^1.0.7"
+  },
+  "devDependencies": {
+    "parcel": "2.0.0-beta.1",
+    "sass": "^1.26.10"
+  }
+}

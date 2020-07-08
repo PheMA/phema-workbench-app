@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Tabs,
-  Tab,
-  Icon,
-  ContextMenuTarget,
-  Menu,
-  MenuItem
-} from "@blueprintjs/core";
+import { Tabs, Tab, Icon, Menu, MenuItem } from "@blueprintjs/core";
+
+// See https://github.com/palantir/blueprint/issues/3891
+import { ContextMenuTarget } from "@blueprintjs/core/lib/esnext/components/context-menu/contextMenuTarget.js";
 
 import Welcome from "./Welcome";
 import { CqlWindow } from "../cql";
@@ -52,7 +48,7 @@ const renderCqlTabs = (tabs, resized, connections, saveLibrary) => {
   ));
 };
 
-const Details = props => {
+const Details = (props) => {
   // console.log("Details", props);
 
   const { cqlScripts, selectedTab, resized, connections, saveLibrary } = props;
