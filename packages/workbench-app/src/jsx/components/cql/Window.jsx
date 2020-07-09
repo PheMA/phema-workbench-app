@@ -31,7 +31,7 @@ const execute = (setResult, connections, library) => (connectionId) => {
   const body = buildParametersResource(params);
 
   phemaWorkbenchApi
-    .run(connection.url, body, { "Content-Type": "application/json" })
+    .runCQL(connection.url, body, { "Content-Type": "application/json" })
     .then((result) => {
       setResult(result);
     })

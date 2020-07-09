@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "PhEMA Workbench App",
   "scripts": {
-    "start": "yarn run build:worker && parcel serve --port 8989 --log-level verbose ./index.html",
+    "start": "yarn run build:worker && parcel serve --port 8989 --log-level verbose --no-cache ./index.html",
     "watch": "parcel --port 8989 watch index.html",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run build:worker && parcel build --no-scope-hoist index.html",
@@ -17,6 +17,7 @@
     "@blueprintjs/icons": "^3.19.0",
     "@blueprintjs/select": "^3.13.4",
     "@phema/cql-editor": "^1.0.0",
+    "@phema/terminology-manager": "^1.0.0",
     "core-js": "^3.6.5",
     "es6-shim": "^0.35.4",
     "jsoneditor": "^7.1.0",

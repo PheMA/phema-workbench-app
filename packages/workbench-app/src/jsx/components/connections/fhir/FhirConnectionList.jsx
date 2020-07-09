@@ -7,7 +7,7 @@ import {
   PopoverInteractionKind,
 } from "@blueprintjs/core";
 
-const CqlConnectionSummary = (props) => {
+const FhirConnectionSummary = (props) => {
   const { connection } = props;
 
   const propertyRows = connection.otherProps.map((prop, index) => (
@@ -18,7 +18,7 @@ const CqlConnectionSummary = (props) => {
   ));
 
   return (
-    <div className="cqlConnectionSummary">
+    <div className="fhirConnectionSummary">
       <HTMLTable>
         <thead>
           <tr>
@@ -38,33 +38,33 @@ const CqlConnectionSummary = (props) => {
   );
 };
 
-const CqlConnectionListItem = (props) => {
+const FhirConnectionListItem = (props) => {
   const { connection, index } = props;
 
   const displayName = connection.name || connection.url;
 
   return (
-    <div key={connection.id} className="cqlConnectionList__item">
-      <span className="cqlConnectionList__item__name">
+    <div key={connection.id} className="fhirConnectionList__item">
+      <span className="fhirConnectionList__item__name">
         <Icon icon="database" />
         <Popover
           interactionKind={PopoverInteractionKind.HOVER}
-          content={<CqlConnectionSummary connection={connection} />}
+          content={<FhirConnectionSummary connection={connection} />}
         >
           <a href="#">{displayName}</a>
         </Popover>
       </span>
-      <span className="cqlConnectionList__item__url">{connection.url}</span>
+      <span className="fhirConnectionList__item__url">{connection.url}</span>
     </div>
   );
 };
 
-const CqlConnectionList = (props) => {
+const FhirConnectionList = (props) => {
   const { connections } = props;
 
   return connections.map((connection, index) => (
-    <div key={connection.id} className="cqlConnectionList">
-      <CqlConnectionListItem
+    <div key={connection.id} className="fhirConnectionList">
+      <FhirConnectionListItem
         key={connection.id}
         connection={connection}
         index={index}
@@ -73,4 +73,4 @@ const CqlConnectionList = (props) => {
   ));
 };
 
-export default CqlConnectionList;
+export default FhirConnectionList;

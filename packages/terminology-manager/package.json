@@ -1,0 +1,12 @@
+{
+  "name": "@phema/terminology-manager",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.13.1"
+  },
+  "devDependencies": {
+    "@ahryman40k/ts-fhir-types": "^4.0.32"
+  }
+}

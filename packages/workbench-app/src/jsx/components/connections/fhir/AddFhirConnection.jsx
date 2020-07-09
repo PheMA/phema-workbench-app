@@ -10,7 +10,7 @@ import {
   InputGroup,
 } from "@blueprintjs/core";
 
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
 const otherProperty = (prop, index, removeProp, cqlConfig, setCqlConfig) => {
   return (
@@ -56,7 +56,7 @@ const validConfig = (cqlConfig) => {
   return valid;
 };
 
-const AddCqlConnection = (props) => {
+const AddFhirConnection = (props) => {
   const [cqlConfig, setCqlConfig] = useState({
     name: "",
     id: uuid(),
@@ -77,7 +77,7 @@ const AddCqlConnection = (props) => {
           labelInfo="(optional)"
         >
           <InputGroup
-            id="cql-evaluate-url"
+            id="fhir-connection-url"
             placeholder="Connection name"
             value={cqlConfig.name}
             onChange={(event) => {
@@ -89,13 +89,13 @@ const AddCqlConnection = (props) => {
         </FormGroup>
 
         <FormGroup
-          helperText="The URL to send the CQL evaluation request"
-          label="CQL Evaluation Server"
+          helperText="The base URL of the FHIR server"
+          label="FHIR Base URL"
           labelFor="cql-evaluate-url"
           labelInfo="(required)"
         >
           <InputGroup
-            id="cql-evaluate-url"
+            id="fhir-base-url"
             placeholder="http://workbench.phema.science/fhir/$cql"
             value={cqlConfig.url}
             onChange={(event) => {
@@ -162,4 +162,4 @@ const AddCqlConnection = (props) => {
   );
 };
 
-export default AddCqlConnection;
+export default AddFhirConnection;

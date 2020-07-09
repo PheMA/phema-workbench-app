@@ -6,6 +6,7 @@ import { ContextMenuTarget } from "@blueprintjs/core/lib/esnext/components/conte
 
 import Welcome from "./Welcome";
 import { CqlWindow } from "../cql";
+import { TerminologyManagerWindow } from "../terminology";
 
 const ContextMenuCqlHeader = ContextMenuTarget(
   class CqlTabHeader extends React.Component {
@@ -29,29 +30,48 @@ const ContextMenuCqlHeader = ContextMenuTarget(
   }
 );
 
-const renderCqlTabs = (tabs, resized, connections, saveLibrary) => {
-  return tabs.map((tab, index) => (
-    <Tab
-      key={tab.id}
-      id={tab.id}
-      title={<ContextMenuCqlHeader />}
-      panel={
-        <CqlWindow
-          scriptId={tab.id}
-          resized={resized}
-          library={tab.library}
-          connections={connections}
-          saveLibrary={saveLibrary}
-        />
-      }
-    />
-  ));
+const TerminologyManagerTabHeader = () => (
+  <div className="details__terminologyTabHeader">
+    <Icon icon="translate" /> Terminology Manager
+  </div>
+);
+
+const renderCqlTab = (tab, resized, connections, saveLibrary) => (
+  <Tab
+    key={tab.id}
+    id={tab.id}
+    title={<ContextMenuCqlHeader />}
+    panel={
+      <CqlWindow
+        scriptId={tab.id}
+        resized={resized}
+        library={tab.library}
+        connections={connections}
+        saveLibrary={saveLibrary}
+      />
+    }
+  />
+);
+
+const renderTerminologyManagerTab = (tab, connections) => (
+  <Tab
+    key={tab.id}
+    id={tab.id}
+    title={<TerminologyManagerTabHeader />}
+    panel={<TerminologyManagerWindow />}
+  />
+);
+
+const renderTabs = (tabs, resized, connections, saveLibrary) => {
+  return tabs.map((tab) => {
+    return tab.library !== undefined
+      ? renderCqlTab(tab, resized, connections, saveLibrary)
+      : renderTerminologyManagerTab(tab, connections);
+  });
 };
 
 const Details = (props) => {
-  // console.log("Details", props);
-
-  const { cqlScripts, selectedTab, resized, connections, saveLibrary } = props;
+  const { tabs, selectedTab, resized, connections, saveLibrary } = props;
 
   const [selectedTabId, setSelectedTabId] = useState("welcome");
 
@@ -74,7 +94,7 @@ const Details = (props) => {
         large
       >
         <Tab key="welcome" id="welcome" title={title} panel={<Welcome />} />
-        {renderCqlTabs(cqlScripts, resized, connections, saveLibrary)}
+        {renderTabs(tabs, resized, connections, saveLibrary)}
       </Tabs>
     </div>
   );

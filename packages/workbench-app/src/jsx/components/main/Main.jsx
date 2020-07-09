@@ -12,7 +12,13 @@ const resized = () => {
 };
 
 const Main = (props) => {
-  const { localForage, cqlScripts, selectedTab, saveLibrary } = props;
+  const {
+    localForage,
+    cqlScripts,
+    terminologyManagers,
+    selectedTab,
+    saveLibrary,
+  } = props;
 
   const [connections, setConnections] = useState([]);
 
@@ -45,7 +51,7 @@ const Main = (props) => {
         >
           <Details
             saveLibrary={saveLibrary}
-            cqlScripts={cqlScripts}
+            tabs={[...cqlScripts, ...terminologyManagers]}
             selectedTab={selectedTab}
             resized={resized}
             connections={connections}

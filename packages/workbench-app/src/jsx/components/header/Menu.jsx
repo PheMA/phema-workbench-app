@@ -2,12 +2,17 @@ import * as React from "react";
 
 import { Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 
-const PhemaMenu = props => {
-  const { addCqlScript } = props;
+const PhemaMenu = (props) => {
+  const { addCqlScript, addTerminologyManager } = props;
 
   return (
     <Menu>
       <MenuItem icon="play" text="New CQL Script" onClick={addCqlScript} />
+      <MenuItem
+        icon="translate"
+        text="New Terminology Manager"
+        onClick={addTerminologyManager}
+      />
       <MenuItem icon="draw" text="Author Phenotype" disabled={true} />
       <MenuItem icon="cog" text="Settings" disabled={true} />
       <MenuDivider />

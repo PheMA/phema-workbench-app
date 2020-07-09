@@ -15,21 +15,26 @@ const Header = (props) => {
     );
   });
 
-  const [selected, setSelected] = useState(undefined);
+  const [selectedVsac, setSelectedVsac] = useState(undefined);
+  const [selectedTerminologyServer, setSelectedTerminologyServer] = useState(
+    undefined
+  );
 
   return (
-    <div className="cqlWindow__header">
+    <div className="terminologyWindow__header">
       <Navbar>
         <Navbar.Group align={Alignment.LEFT}>
           <Navbar.Heading>
-            <span className="cqlWindow__header__title">CQL EDITOR</span>
+            <span className="terminologyWindow__header__title">
+              TERMINOLOGY MANAGER
+            </span>
           </Navbar.Heading>
           <Navbar.Divider />
           <Button className="bp3-minimal" icon="download" text="Download" />
           <Button className="bp3-minimal" icon="trash" text="Delete" />
         </Navbar.Group>
         <Navbar.Group align={Alignment.RIGHT}>
-          <div className="cqlWindow__header__runner">
+          <div className="terminologyWindow__header__runner">
             <HTMLSelect
               className="bp3-minimal"
               value={selected}

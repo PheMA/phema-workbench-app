@@ -13,3 +13,24 @@
     align-items: center;
   }
 }
+
+.toolbar {
+  &__header {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    &__title {
+      font-family: "Syncopate";
+    }
+
+    &__runner {
+      margin-right: 10px;
+
+      &__label {
+        margin-right: 10px;
+        line-height: 20px;
+      }
+    }
+  }
+}

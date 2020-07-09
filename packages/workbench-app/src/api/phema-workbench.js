@@ -62,6 +62,10 @@ class PhemaWorkbenchApi {
     });
   }
 
+  async runCQL(fhirBaseUrl, body, headers) {
+    return this.run(`${fhirBaseUrl}/$cql`, body, headers);
+  }
+
   async post(url, body, headers) {
     return fetch(url, {
       method: "POST",

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
 import { Header, Main, Footer } from "../../components";
 
 const addCqlScript = (localForage, setCqlScripts, setSelectedTab) => () => {
-  localForage.getItem("cqlScripts").then(cqlScripts => {
+  localForage.getItem("cqlScripts").then((cqlScripts) => {
     if (cqlScripts === null) {
       cqlScripts = [];
     }
@@ -22,12 +22,12 @@ const addCqlScript = (localForage, setCqlScripts, setSelectedTab) => () => {
 };
 
 const saveLibrary = (localForage, setCqlScripts) => (id, library) => {
-  localForage.getItem("cqlScripts").then(scripts => {
-    const newScripts = scripts.map(lib => {
+  localForage.getItem("cqlScripts").then((scripts) => {
+    const newScripts = scripts.map((lib) => {
       if (lib.id == id) {
         return {
           id,
-          library
+          library,
         };
       } else {
         return lib;
@@ -40,14 +40,43 @@ const saveLibrary = (localForage, setCqlScripts) => (id, library) => {
   });
 };
 
-const App = props => {
+const addTerminologyManager = (
+  localForage,
+  setTerminologyManagers,
+  setSelectedTab
+) => () => {
+  localForage.getItem("terminologyManagers").then((terminologyManagers) => {
+    if (terminologyManagers == null) {
+      terminologyManagers = [];
+    }
+
+    const tabId = uuid();
+
+    setSelectedTab(tabId);
+
+    terminologyManagers.push({ id: tabId, bundle: undefined });
+
+    localForage.setItem("terminologyManagers", terminologyManagers).then(() => {
+      setTerminologyManagers(terminologyManagers);
+    });
+  });
+};
+
+const App = (props) => {
   const { localForage } = props;
 
   const [cqlScripts, setCqlScripts] = useState([]);
+  const [terminologyManagers, setTerminologyManagers] = useState([]);
 
   useEffect(() => {
-    localForage.getItem("cqlScripts").then(tabs => {
-      setCqlScripts(tabs ? tabs : []);
+    localForage.getItem("cqlScripts").then((cqlScripts) => {
+      setCqlScripts(cqlScripts ? cqlScripts : []);
+    });
+  }, []);
+
+  useEffect(() => {
+    localForage.getItem("terminologyManagers").then((terminologyManagers) => {
+      setTerminologyManagers(terminologyManagers ? terminologyManagers : []);
     });
   }, []);
 
@@ -58,11 +87,17 @@ const App = props => {
       <Header
         localForage={localForage}
         addCqlScript={addCqlScript(localForage, setCqlScripts, setSelectedTab)}
+        addTerminologyManager={addTerminologyManager(
+          localForage,
+          setTerminologyManagers,
+          setSelectedTab
+        )}
       />
       <Main
         saveLibrary={saveLibrary(localForage, setCqlScripts)}
         localForage={localForage}
         cqlScripts={cqlScripts}
+        terminologyManagers={terminologyManagers}
         selectedTab={selectedTab}
       />
       <Footer />

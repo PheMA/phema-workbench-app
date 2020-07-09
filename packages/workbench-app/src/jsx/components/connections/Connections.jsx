@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Dialog } from "@blueprintjs/core";
 import ActionHeader from "../common/ActionHeader.jsx";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
-import { AddCqlConnection, CqlConnectionList } from "./cql";
+import { AddFhirConnection, FhirConnectionList } from "./fhir";
+
+import "./Connections.scss";
 
 const defaultCQLConnections = () => {
   const port = window.location.port ? `:${window.location.port}` : "";
@@ -12,13 +14,13 @@ const defaultCQLConnections = () => {
     {
       name: "PhEMA Workbench CQL Executor",
       id: uuid(),
-      url: `${window.location.protocol}//${window.location.hostname}${port}/fhir/$cql`,
+      url: `${window.location.protocol}//${window.location.hostname}${port}/fhir`,
       otherProps: [],
     },
     {
       name: "Local CQL Executor",
       id: uuid(),
-      url: `${window.location.protocol}//${window.location.hostname}:8080/cqf-ruler-r4/fhir/$cql`,
+      url: `${window.location.protocol}//${window.location.hostname}:8080/cqf-ruler-r4/fhir`,
       otherProps: [],
     },
     // {
@@ -129,12 +131,12 @@ const ConnectionContainer = (props) => {
         onChange={setSelectedTab}
         large
       >
-        <Tab id="i2b2" title="i2b2" panel={<ConnectionPanel />} />
+        <Tab id="i2b2" title="i2b2" disabled panel={<ConnectionPanel />} />
         <Tab id="omop" title="OMOP" panel={<ConnectionPanel />} />
         <Tab
-          id="cql"
-          title="CQL"
-          panel={<CqlConnectionList connections={connections.cql} />}
+          id="fhir"
+          title="FHIR"
+          panel={<FhirConnectionList connections={connections.cql} />}
         />
         <Tab id="workbench" title="Workbench" panel={<ConnectionPanel />} />
       </Tabs>
@@ -144,9 +146,12 @@ const ConnectionContainer = (props) => {
 
 const renderAddComponent = (selectedTab, setModalOpen, saveConfig) => {
   switch (selectedTab) {
-    case "cql":
+    case "fhir":
       return (
-        <AddCqlConnection setModalOpen={setModalOpen} saveConfig={saveConfig} />
+        <AddFhirConnection
+          setModalOpen={setModalOpen}
+          saveConfig={saveConfig}
+        />
       );
     default:
       return null;
@@ -176,7 +181,7 @@ const Connections = (props) => {
 
   const [modalOpen, setModalOpen] = useState(false);
 
-  const [selectedTab, setSelectedTab] = useState("cql");
+  const [selectedTab, setSelectedTab] = useState("fhir");
 
   const [connections, setConnections] = useState(emptyConfig());
 
