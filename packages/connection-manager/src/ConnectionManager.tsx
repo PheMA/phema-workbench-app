@@ -6,7 +6,12 @@ import { ActionHeader } from "@phema/workbench-common";
 
 import { emptyConfig } from "./detaults";
 
-import { FhirConnectionEditor, ConnectionContainer } from "./index";
+import {
+  FhirConnectionEditor,
+  OmopConnectionEditor,
+  WorkbenchConnectionEditor,
+  ConnectionContainer,
+} from "./index";
 
 import { Connection, Connections, ConnectionType } from "./module.d";
 
@@ -43,6 +48,34 @@ const ConnectionEditor: React.FC<ConnectionEditorProps> = ({
           saveConnection={(connection) => {
             connectionSaver(
               ConnectionType.FHIR,
+              connection,
+              connectionsInternal,
+              setConnectionsInternal
+            );
+          }}
+        />
+      );
+    case ConnectionType.OMOP:
+      return (
+        <OmopConnectionEditor
+          setModalOpen={setModalOpen}
+          saveConnection={(connection) => {
+            connectionSaver(
+              ConnectionType.OMOP,
+              connection,
+              connectionsInternal,
+              setConnectionsInternal
+            );
+          }}
+        />
+      );
+    case ConnectionType.WORKBENCH:
+      return (
+        <WorkbenchConnectionEditor
+          setModalOpen={setModalOpen}
+          saveConnection={(connection) => {
+            connectionSaver(
+              ConnectionType.WORKBENCH,
               connection,
               connectionsInternal,
               setConnectionsInternal
