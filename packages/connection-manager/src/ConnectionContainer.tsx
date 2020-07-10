@@ -2,12 +2,7 @@ import React from "react";
 
 import { Tabs, Tab } from "@blueprintjs/core";
 
-import {
-  FhirConnectionList,
-  OmopConnectionList,
-  WorkbenchConnectionList,
-  ConnectionList,
-} from "./index";
+import { ConnectionList } from "./index";
 
 import "./ConnectionManager.scss";
 

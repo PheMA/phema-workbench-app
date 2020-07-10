@@ -1,9 +1,6 @@
-import { FhirConnectionEditor, FhirConnectionList } from "./fhir";
-import { OmopConnectionEditor, OmopConnectionList } from "./omop";
-import {
-  WorkbenchConnectionEditor,
-  WorkbenchConnectionList,
-} from "./workbench";
+import { FhirConnectionEditor } from "./fhir";
+import { OmopConnectionEditor } from "./omop";
+import { WorkbenchConnectionEditor } from "./workbench";
 
 import { ConnectionManager } from "./ConnectionManager";
 import { ConnectionContainer } from "./ConnectionContainer";
@@ -25,11 +22,8 @@ export {
   ConnectionContainer,
   ConnectionManager,
   FhirConnectionEditor,
-  FhirConnectionList,
   OmopConnectionEditor,
-  OmopConnectionList,
   WorkbenchConnectionEditor,
-  WorkbenchConnectionList,
   ConnectionList,
   // fields
   ConnectionNameField,
