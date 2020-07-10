@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { HTMLSelect } from "@blueprintjs/core";
+import { ConnectionSelector as CommonConnectionSelector } from "@phema/workbench-common";
 
 import { TerminologyManager } from "@phema/terminology-manager";
 import { Toolbar } from "@phema/workbench-common";
@@ -19,16 +19,11 @@ const ConnectionSelector = ({ label, connections, selected, setSelected }) => {
   return (
     <div className="terminologyManager__backend__selector">
       {label}
-      <HTMLSelect
-        className="bp3-minimal"
-        value={selected}
-        onChange={(e) => {
-          setSelected(e.target.value);
-        }}
-      >
-        <option>Select backend...</option>
-        {options}
-      </HTMLSelect>
+      <CommonConnectionSelector
+        connections={connections.fhir}
+        selected={selected}
+        setSelected={setSelected}
+      />
     </div>
   );
 };

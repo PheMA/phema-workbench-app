@@ -1,19 +1,10 @@
 import React, { useState } from "react";
 
-import { Navbar, Button, Alignment, HTMLSelect } from "@blueprintjs/core";
+import { Navbar, Button, Alignment } from "@blueprintjs/core";
+import { ConnectionSelector } from "@phema/workbench-common";
 
 const Header = (props) => {
   const { connections, execute } = props;
-
-  const options = connections.fhir.map((conn) => {
-    const name = conn.name ? conn.name : conn.url;
-
-    return (
-      <option key={conn.id} value={conn.id}>
-        {name}
-      </option>
-    );
-  });
 
   const [selected, setSelected] = useState(undefined);
 
@@ -30,16 +21,11 @@ const Header = (props) => {
         </Navbar.Group>
         <Navbar.Group align={Alignment.RIGHT}>
           <div className="cqlWindow__header__runner">
-            <HTMLSelect
-              className="bp3-minimal"
-              value={selected}
-              onChange={(e) => {
-                setSelected(e.target.value);
-              }}
-            >
-              <option>Select backend...</option>
-              {options}
-            </HTMLSelect>
+            <ConnectionSelector
+              connections={connections}
+              selected={selected}
+              setSelected={setSelected}
+            />
           </div>
           <Button
             disabled={!selected}

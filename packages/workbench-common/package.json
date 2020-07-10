@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "license": "MIT",
   "dependencies": {
-    "react": "^16.13.1",
-    "@blueprintjs/core": "^3.29.0"
+    "@blueprintjs/core": "^3.29.0",
+    "@blueprintjs/select": "^3.13.4",
+    "react": "^16.13.1"
   }
 }
