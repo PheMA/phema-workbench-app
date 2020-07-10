@@ -7,7 +7,7 @@ import Dropzone from "react-dropzone";
 import numeral from "numeral";
 import moment from "moment";
 
-import ActionHeader from "../common/ActionHeader.jsx";
+import { ActionHeader } from "@phema/workbench-common";
 
 import { phenotypeListSelector } from "../../../store/phenotypes/selectors";
 import { fetchPhenotypeList } from "../../../store/phenotypes/actions";

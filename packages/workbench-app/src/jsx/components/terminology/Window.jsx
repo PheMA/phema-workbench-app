@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { HTMLSelect } from "@blueprintjs/core";
 
 import { TerminologyManager } from "@phema/terminology-manager";
-import Toolbar from "../common/Toolbar";
+import { Toolbar } from "@phema/workbench-common";
 
 const ConnectionSelector = ({ label, connections, selected, setSelected }) => {
   const options = connections.fhir.map((conn) => {

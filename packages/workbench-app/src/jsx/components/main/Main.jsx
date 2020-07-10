@@ -4,7 +4,6 @@ import SplitPane from "react-split-pane";
 import { ConnectionManager } from "@phema/connection-manager";
 
 import Phenotypes from "../phenotypes/Phenotypes.jsx";
-import Connections from "../connections/Connections.jsx";
 import Details from "../details/Details.jsx";
 import ExecutionLog from "../log/ExecutionLog";
 
@@ -41,10 +40,6 @@ const Main = (props) => {
           onDragFinished={resized}
         >
           <Phenotypes localForage={localForage} />
-          {/* <Connections
-            localForage={localForage}
-            setConnections={setConnections}
-          /> */}
           <ConnectionManager
             connections={connections}
             setConnections={setConnections}

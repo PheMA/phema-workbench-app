@@ -1,5 +1,5 @@
 import React from "react";
-import ActionHeader from "../common/ActionHeader.jsx";
+import { ActionHeader } from "@phema/workbench-common";
 
 const logLines = [
   "2019-01-29T03:50:42+00:00 PhEMA Executer v0.1.1 starting",
@@ -13,14 +13,14 @@ const logLines = [
   "2019-01-29T03:52:32+00:00 Loading the specific OHDSI configuration information",
   "2019-01-29T03:52:40+00:00 OHDSI configuration details have been loaded",
   "2019-01-29T03:52:47+00:00 Establishing concept sets in OHDSI",
-  "2019-01-29T03:52:57+00:00 Created 10 new concept sets in OHDSI"
+  "2019-01-29T03:52:57+00:00 Created 10 new concept sets in OHDSI",
 ];
 
 class ExecutionLog extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      logLines
+      logLines,
     };
   }
 
