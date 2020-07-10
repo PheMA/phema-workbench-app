@@ -5,6 +5,7 @@
   "author": "PhEMA Collaborators",
   "license": "Apache-2.0",
   "dependencies": {
-    "monaco-editor": "^0.20.0"
+    "monaco-editor": "^0.20.0",
+    "uuid": "^8.2.0"
   }
 }

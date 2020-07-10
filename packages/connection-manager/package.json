@@ -1,0 +1,12 @@
+{
+  "name": "@phema/connection-manager",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@phema/workbench-common": "^1.0.0",
+    "react": "^16.13.1",
+    "uuid": "^8.2.0",
+    "@blueprintjs/core": "^3.29.0"
+  }
+}

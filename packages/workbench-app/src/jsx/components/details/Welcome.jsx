@@ -8,8 +8,8 @@ const Welcome = (props) => (
     <div>
       There are a few things you can do to get started running a phenotype:
       <ol>
-        <li>Add an OHDSI or i2b2 connection</li>
-        <li>Add a phenotype</li>
+        <li>Add an OMOP or FHIR connection</li>
+        <li>Create a new CQL script</li>
       </ol>
     </div>
   </div>

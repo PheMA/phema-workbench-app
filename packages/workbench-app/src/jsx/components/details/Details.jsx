@@ -58,7 +58,7 @@ const renderTerminologyManagerTab = (tab, connections) => (
     key={tab.id}
     id={tab.id}
     title={<TerminologyManagerTabHeader />}
-    panel={<TerminologyManagerWindow />}
+    panel={<TerminologyManagerWindow connections={connections} />}
   />
 );
 

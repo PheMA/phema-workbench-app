@@ -5,7 +5,7 @@ import { Navbar, Button, Alignment, HTMLSelect } from "@blueprintjs/core";
 const Header = (props) => {
   const { connections, execute } = props;
 
-  const options = connections.cql.map((conn) => {
+  const options = connections.fhir.map((conn) => {
     const name = conn.name ? conn.name : conn.url;
 
     return (

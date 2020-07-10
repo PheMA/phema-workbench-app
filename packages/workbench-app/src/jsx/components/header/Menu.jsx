@@ -17,6 +17,15 @@ const PhemaMenu = (props) => {
       <MenuItem icon="cog" text="Settings" disabled={true} />
       <MenuDivider />
       <MenuItem
+        icon="trash"
+        text="Reset Workbench"
+        onClick={() => {
+          localStorage.clear();
+          location.reload();
+        }}
+      />
+      <MenuDivider />
+      <MenuItem
         target="_blank"
         href="https://projectphema.org/"
         icon="info-sign"

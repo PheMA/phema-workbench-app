@@ -6,14 +6,13 @@ import {
   Popover,
   PopoverInteractionKind,
 } from "@blueprintjs/core";
+import { FHIRServerConfig } from "@phema/terminology-manager";
 
-const FhirConnectionSummary = (props) => {
-  const { connection } = props;
-
-  const propertyRows = connection.otherProps.map((prop, index) => (
-    <tr key={`${prop.name}-${index}`}>
-      <td>{prop.name}</td>
-      <td>{prop.value}</td>
+const FhirConnectionSummary = ({ connection }) => {
+  const propertyRows = connection.parameters?.map((parameter, index) => (
+    <tr key={`${parameter.name}-${index}`}>
+      <td>{parameter.name}</td>
+      <td>{parameter.value}</td>
     </tr>
   ));
 
@@ -28,8 +27,8 @@ const FhirConnectionSummary = (props) => {
         </thead>
         <tbody>
           <tr>
-            <td>Connection URL</td>
-            <td>{connection.url}</td>
+            <td>FHIR Base URL</td>
+            <td>{connection.fhirBaseUrl}</td>
           </tr>
           {propertyRows}
         </tbody>
@@ -38,10 +37,8 @@ const FhirConnectionSummary = (props) => {
   );
 };
 
-const FhirConnectionListItem = (props) => {
-  const { connection, index } = props;
-
-  const displayName = connection.name || connection.url;
+const FhirConnectionListItem = ({ connection, index }) => {
+  const displayName = connection.name || connection.fhirBaseUrl;
 
   return (
     <div key={connection.id} className="fhirConnectionList__item">
@@ -54,14 +51,20 @@ const FhirConnectionListItem = (props) => {
           <a href="#">{displayName}</a>
         </Popover>
       </span>
-      <span className="fhirConnectionList__item__url">{connection.url}</span>
+      <span className="fhirConnectionList__item__url">
+        {connection.fhirBaseUrl}
+      </span>
     </div>
   );
 };
 
-const FhirConnectionList = (props) => {
-  const { connections } = props;
+interface FhirConnectionListProps {
+  connections: FHIRServerConfig[];
+}
 
+const FhirConnectionList: React.FC<FhirConnectionListProps> = ({
+  connections,
+}) => {
   return connections.map((connection, index) => (
     <div key={connection.id} className="fhirConnectionList">
       <FhirConnectionListItem

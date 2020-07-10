@@ -22,7 +22,7 @@ const buildParametersResource = (params) => {
 };
 
 const execute = (setResult, connections, library) => (connectionId) => {
-  const connection = connections.cql.find((conn) => conn.id == connectionId);
+  const connection = connections.fhir.find((conn) => conn.id == connectionId);
 
   const phemaWorkbenchApi = new PhemaWorkbenchApi();
 
@@ -31,7 +31,9 @@ const execute = (setResult, connections, library) => (connectionId) => {
   const body = buildParametersResource(params);
 
   phemaWorkbenchApi
-    .runCQL(connection.url, body, { "Content-Type": "application/json" })
+    .runCQL(connection.fhirBaseUrl, body, {
+      "Content-Type": "application/json",
+    })
     .then((result) => {
       setResult(result);
     })

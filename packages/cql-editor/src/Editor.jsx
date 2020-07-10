@@ -1,7 +1,7 @@
 import React from "react";
 
 import * as monaco from "monaco-editor";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
 import * as CqlMonarch from "./monarch-cql";
 

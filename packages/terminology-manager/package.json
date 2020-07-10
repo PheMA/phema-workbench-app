@@ -4,7 +4,9 @@
   "main": "src/index.ts",
   "license": "MIT",
   "dependencies": {
-    "react": "^16.13.1"
+    "react": "^16.13.1",
+    "react-dropzone": "^v10.1.4",
+    "@phema/workbench-common": "^1.0.0"
   },
   "devDependencies": {
     "@ahryman40k/ts-fhir-types": "^4.0.32"
