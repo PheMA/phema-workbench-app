@@ -41,6 +41,9 @@ class PhemaWorkbenchApi {
         } else if (res.headers.get("Content-Type") === "text/plain") {
           body = await res.text();
           type = "text";
+        } else if (res.headers.get("Content-Type") === "text/vnd.graphviz") {
+          body = await res.text();
+          type = "graphviz";
         } else {
           body = await res.text();
           type = "xml";

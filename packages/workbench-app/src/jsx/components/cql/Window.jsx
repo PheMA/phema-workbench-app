@@ -21,25 +21,93 @@ const buildParametersResource = (params) => {
   return resource;
 };
 
+const getConnectionType = (connections, uuid) => {
+  let found = undefined;
+
+  Object.keys(connections).forEach((key) => {
+    connections[key].forEach((connection) => {
+      if (connection.id === uuid) {
+        found = found || key;
+      }
+    });
+  });
+
+  return found;
+};
+
+const getConnection = (connections, uuid) => {
+  let found = undefined;
+
+  function searchList(connections, uuid) {
+    let connection = connections.find((connection) => connection.id === uuid);
+
+    if (connection) {
+      return connection;
+    }
+  }
+
+  Object.keys(connections).forEach((key) => {
+    if (connections[key]?.length > 0) {
+      found = found || searchList(connections[key], uuid);
+    }
+  });
+
+  return found;
+};
+
 const execute = (setResult, connections, library) => (connectionId) => {
-  const connection = connections.fhir.find((conn) => conn.id == connectionId);
+  const connectionType = getConnectionType(connections, connectionId);
+  const connection = getConnection(connections, connectionId);
 
   const phemaWorkbenchApi = new PhemaWorkbenchApi();
 
-  const params = [{ name: "code", value: library }, ...connection.otherProps];
+  if (connectionType === "fhir") {
+    const params = [{ name: "code", value: library }, ...connection.parameters];
 
-  const body = buildParametersResource(params);
+    const body = buildParametersResource(params);
 
-  phemaWorkbenchApi
-    .runCQL(connection.fhirBaseUrl, body, {
-      "Content-Type": "application/json",
-    })
-    .then((result) => {
-      setResult(result);
-    })
-    .catch((e) => {
-      console.log("Error", e);
+    phemaWorkbenchApi
+      .runCQL(connection.fhirBaseUrl, body, {
+        "Content-Type": "application/json",
+      })
+      .then((result) => {
+        setResult(result);
+      })
+      .catch((e) => {
+        console.log("Error", e);
+      });
+  } else {
+    let body;
+
+    if (connectionType === "omop") {
+      body = {
+        [connection.codeProperty]: library,
+        name: connection.statementName,
+        omopServerUrl: connection.webApiUrl,
+        source: connection.source,
+      };
+    } else {
+      body = {
+        [connection.codeProperty]: library,
+        name: connection.statementName,
+      };
+    }
+
+    connection.parameters.forEach((parameter) => {
+      body[parameter.name] = parameter.value;
     });
+
+    phemaWorkbenchApi
+      .run(connection.url, body, {
+        "Content-Type": "application/json",
+      })
+      .then((result) => {
+        setResult(result);
+      })
+      .catch((e) => {
+        console.log("Error", e);
+      });
+  }
 };
 
 const CqlWindow = (props) => {

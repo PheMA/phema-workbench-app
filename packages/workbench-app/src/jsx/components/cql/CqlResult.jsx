@@ -2,6 +2,7 @@ import React from "react";
 import ReactJson from "react-json-view";
 
 import { NonIdealState } from "@blueprintjs/core";
+import { PhenotypeVisualizer } from "@phema/phenotype-visualizer";
 
 import SqlResult from "./SqlResult";
 
@@ -35,6 +36,8 @@ const CqlResult = (props) => {
         />
       );
     }
+  } else if (result.type === "graphviz") {
+    resultComp = <PhenotypeVisualizer dotsrc={result.body} />;
   } else {
     resultComp = <div>{result.value}</div>;
   }
