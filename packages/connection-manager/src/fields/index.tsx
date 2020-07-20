@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { v4 as uuid } from "uuid";
 
@@ -8,6 +8,8 @@ import {
   Button,
   ControlGroup,
   Intent,
+  RadioGroup,
+  Radio,
   FormGroup,
   InputGroup,
 } from "@blueprintjs/core";
@@ -54,6 +56,176 @@ interface FieldProps {
   connection: Connection;
   setConnection: (connection: Connection) => void;
 }
+
+enum AuthType {
+  NONE = "none",
+  BASIC = "basic",
+  OAUTH = "auth",
+}
+
+const basicTokenToUserPass = (basicToken) => {
+  if (!basicToken) {
+    return {
+      user: undefined,
+      pass: undefined,
+    };
+  }
+
+  const decoded = atob(basicToken);
+  const tokens = decoded.split(":");
+
+  return {
+    user: tokens[0],
+    pass: tokens[1],
+  };
+};
+
+const userPassToBasicToken = (user, pass) => {
+  return btoa(`${user}:${pass}`);
+};
+
+const UserPass = ({ user, pass, onChange }) => {
+  return (
+    <div className="authUserPass">
+      <FormGroup label="Username" labelInfo="(required)" labelFor="basic-user">
+        <InputGroup
+          id="basic-user"
+          placeholder="Username"
+          value={user}
+          onChange={(e) => {
+            onChange(e.target.value, pass);
+          }}
+        />
+      </FormGroup>
+      <FormGroup label="Password" labelInfo="(required)" labelFor="basic-pass">
+        <InputGroup
+          id="basic-pass"
+          placeholder="Password"
+          value={pass}
+          type="password"
+          onChange={(e) => {
+            onChange(user, e.target.value);
+          }}
+        />
+      </FormGroup>
+    </div>
+  );
+};
+
+const AccessToken = ({ token, onChange }) => {
+  return (
+    <div className="authAccessToken">
+      <FormGroup
+        label="Access Token"
+        labelInfo="(required)"
+        labelFor="bearer-token"
+      >
+        <InputGroup
+          id="bearer-token"
+          placeholder="access_token"
+          value={token}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
+        />
+      </FormGroup>
+    </div>
+  );
+};
+
+export const AuthFieldGroup: React.FC<FieldProps> = ({
+  connection,
+  setConnection,
+}) => {
+  const getAuthType = (connection) => {
+    if (!connection?.auth) {
+      return AuthType.NONE;
+    } else if (connection?.auth?.hasOwnProperty("basic")) {
+      return AuthType.BASIC;
+    } else if (connection?.auth?.hasOwnProperty("oauth")) {
+      return AuthType.OAUTH;
+    } else {
+      throw new Error("Unknown authentication type");
+    }
+  };
+
+  const handleChange = (authType, token) => {
+    if (authType === AuthType.NONE) {
+      const newConnection = Object.assign({}, connection, {
+        auth: AuthType.NONE,
+      });
+
+      delete newConnection.auth;
+
+      setConnection(newConnection);
+    } else if (authType === AuthType.BASIC) {
+      setConnection(
+        Object.assign({}, connection, {
+          auth: {
+            basic: token,
+          },
+        })
+      );
+    } else if (authType === AuthType.OAUTH) {
+      setConnection(
+        Object.assign({}, connection, {
+          auth: {
+            oauth: token,
+          },
+        })
+      );
+    } else {
+      throw new Error("Unknown authentication type");
+    }
+  };
+
+  let authFields = null;
+
+  if (getAuthType(connection) === AuthType.BASIC) {
+    const { user, pass } = basicTokenToUserPass(connection?.auth?.basic);
+
+    authFields = (
+      <UserPass
+        user={user || ""}
+        pass={pass || ""}
+        onChange={(user, pass) => {
+          handleChange(AuthType.BASIC, userPassToBasicToken(user, pass));
+        }}
+      />
+    );
+  } else if (getAuthType(connection) === AuthType.OAUTH) {
+    authFields = (
+      <AccessToken
+        token={connection?.auth?.oauth || ""}
+        onChange={(token) => {
+          handleChange(AuthType.OAUTH, token);
+        }}
+      />
+    );
+  }
+
+  return (
+    <FormGroup
+      helperText="Server authentication configuration"
+      label="Authentication"
+      labelFor="auth"
+      labelInfo="(optional)"
+    >
+      <RadioGroup
+        onChange={(e) => {
+          handleChange(e.target.value, undefined);
+        }}
+        selectedValue={getAuthType(connection)}
+        inline={true}
+      >
+        <Radio label="None" value={AuthType.NONE} />
+        <Radio label="Basic" value={AuthType.BASIC} />
+        <Radio label="OAuth" value={AuthType.OAUTH} />
+      </RadioGroup>
+      {authFields}
+    </FormGroup>
+  );
+};
 
 export const ConnectionNameField: React.FC<FieldProps> = ({
   connection,

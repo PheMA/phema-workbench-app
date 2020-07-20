@@ -9,6 +9,7 @@ import {
   FhirBaseUrlField,
   ParametersFieldGroup,
   SaveCancelButtonGroup,
+  AuthFieldGroup,
 } from "../";
 
 const validConnection = (fhirConnection) => {
@@ -17,6 +18,32 @@ const validConnection = (fhirConnection) => {
   fhirConnection.parameters.forEach((parameter) => {
     valid = valid && !!parameter.name && !!parameter.value;
   });
+
+  if (fhirConnection?.auth?.hasOwnProperty("basic")) {
+    // validate basic token
+
+    try {
+      const decoded = atob(fhirConnection.auth.basic);
+      const tokens = decoded.split(":");
+
+      if (tokens.length !== 2) {
+        valid = false;
+      } else {
+        valid = valid && tokens[0].length > 0 && tokens[1].length > 0;
+      }
+    } catch {
+      valid = false;
+    }
+  }
+
+  if (fhirConnection?.auth?.hasOwnProperty("oauth")) {
+    // validate oauth token
+
+    valid =
+      valid &&
+      fhirConnection.auth.oauth &&
+      fhirConnection.auth.oauth.length > 0;
+  }
 
   return valid;
 };
@@ -41,24 +68,29 @@ const FhirConnectionEditor: React.FC<FhirConnectionEditorProps> = ({
         parameters: [],
       };
 
-  const [fhirConnection, setfhirConnection] = useState(initialState);
+  const [fhirConnection, setFhirConnection] = useState(initialState);
 
   return (
     <>
       <div className={Classes.DIALOG_BODY}>
         <ConnectionNameField
           connection={fhirConnection}
-          setConnection={setfhirConnection}
+          setConnection={setFhirConnection}
         />
 
         <FhirBaseUrlField
           connection={fhirConnection}
-          setConnection={setfhirConnection}
+          setConnection={setFhirConnection}
+        />
+
+        <AuthFieldGroup
+          connection={fhirConnection}
+          setConnection={setFhirConnection}
         />
 
         <ParametersFieldGroup
           connection={fhirConnection}
-          setConnection={setfhirConnection}
+          setConnection={setFhirConnection}
         />
       </div>
       <div className={Classes.DIALOG_FOOTER}>

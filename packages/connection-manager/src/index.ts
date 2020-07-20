@@ -16,6 +16,7 @@ import {
   OmopWebApiSourceField,
   WorkbenchCodePropertyField,
   WorkbenchStatementNameField,
+  AuthFieldGroup,
 } from "./fields";
 
 export {
@@ -35,4 +36,5 @@ export {
   OmopWebApiSourceField,
   WorkbenchCodePropertyField,
   WorkbenchStatementNameField,
+  AuthFieldGroup,
 };

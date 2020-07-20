@@ -17,7 +17,22 @@ const ConnectionPanel: React.FC = () => {
 };
 
 const fhirSummaryMap = {
-  map: [{ fieldName: "fhirBaseUrl", fieldTitle: "FHIR Base URL" }],
+  map: [
+    { fieldName: "fhirBaseUrl", fieldTitle: "FHIR Base URL" },
+    {
+      fieldName: "auth",
+      fieldTitle: "Auth Type",
+      transform: (auth) => {
+        if (!auth) {
+          return "None";
+        } else if (auth.basic) {
+          return "Basic";
+        } else if (auth.oauth) {
+          return "OAuth";
+        }
+      },
+    },
+  ],
 };
 
 const omopSummaryMap = {

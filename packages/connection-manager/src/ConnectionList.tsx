@@ -17,12 +17,16 @@ const ConnectionSummary = ({ connection, summaryMap }) => {
     </tr>
   ));
 
-  const summaryRows = summaryMap.map?.map(({ fieldName, fieldTitle }) => (
-    <tr key={fieldName}>
-      <td>{fieldTitle}</td>
-      <td>{connection[fieldName]}</td>
-    </tr>
-  ));
+  const summaryRows = summaryMap.map?.map(
+    ({ fieldName, fieldTitle, transform }) => (
+      <tr key={fieldName}>
+        <td>{fieldTitle}</td>
+        <td>
+          {transform ? transform(connection[fieldName]) : connection[fieldName]}
+        </td>
+      </tr>
+    )
+  );
 
   return (
     <div className="fhirConnectionSummary">

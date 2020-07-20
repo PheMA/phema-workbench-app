@@ -20,6 +20,22 @@
   }
 }
 
+.authUserPass {
+  display: flex;
+
+  .bp3-form-group {
+    margin: 10px;
+  }
+}
+
+.authAccessToken {
+  .bp3-form-group {
+    margin: 10px;
+  }
+
+  width: 400px;
+}
+
 .connectionList {
   width: 100%;
 
