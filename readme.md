@@ -66,7 +66,16 @@ the components in convenient way.
 git clone https://github.com/phema/phema-workbench-app.git && cd phema-workbench-app
 ```
 
-> #### 2. Run Parcel
+> #### 2. Install dependencies
+
+Running the following will ensure all packages and dependencies are installed.
+
+```
+yarn
+```
+
+
+> #### 3. Run Parcel
 
 Running the following will start Parcel in `serve` mode, which will
 automatically rebuild when you make any changes:
@@ -75,7 +84,7 @@ automatically rebuild when you make any changes:
 yarn start
 ```
 
-> #### 3. Build Release
+> #### 4. Build Release
 
 When you're done making your changes, you can run a release build:
 
