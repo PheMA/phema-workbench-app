@@ -2,7 +2,7 @@ import React from "react";
 
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
-import { FHIRServerConfig, UploadPane, DetailsPane, SearchPane } from "../";
+import { FHIRServerConfig, UploadPane, DetailsPane, SearchPane } from "..";
 
 enum ActionType {
   DETAILS,
@@ -16,10 +16,14 @@ interface ActionPaneProps {
   fhirServerConfig?: FHIRServerConfig;
 }
 
-const ActionPane: React.FC<ActionPaneProps> = ({ action, valueset, fhir }) => {
+const ActionPane: React.FC<ActionPaneProps> = ({
+  action,
+  resource,
+  fhirConnection,
+}) => {
   switch (action) {
     case ActionType.DETAILS:
-      return <DetailsPane valueset={valueset} />;
+      return <DetailsPane resource={resource} />;
     case ActionType.SEARCH:
       return <SearchPane />;
     default:

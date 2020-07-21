@@ -1,34 +1,27 @@
 import React, { useState } from "react";
 
+import { Button, Tooltip } from "@blueprintjs/core";
+
+import {
+  Toolbar,
+  ConnectionSelector as CommonConnectionSelector,
+} from "@phema/workbench-common";
+
 import { R4 } from "@ahryman40k/ts-fhir-types";
 import { ListPane, ActionPane } from "./index";
 
 import "./TerminologyManager.scss";
-
-enum AuthType {
-  Basic = "Basic",
-  Bearer = "Bearer",
-}
-
-interface AuthConfig {
-  type: AuthType;
-  token: string;
-}
-
-interface FHIRServerConfig {
-  fhirBaseUrl: string;
-  auth?: AuthConfig;
-}
+import { ActionType } from "./pane/ActionPane";
 
 interface TerminologyManagerProps {
   terminologyBundle?: R4.IBundle;
-  fhirServerConnections: FHIRServerConfig[];
+  fhirServerConnections: FHIRConnection[];
   onSave: (bundle: R4.IBundle) => void;
 }
 
 interface ConnectionSelectorProps {
   label: string;
-  connections: FHIRServerConfig[];
+  connections: FHIRConnection[];
   selected: string;
   setSelected: (uuid: string) => void;
 }
@@ -39,29 +32,14 @@ const ConnectionSelector: React.FC<ConnectionSelectorProps> = ({
   selected,
   setSelected,
 }) => {
-  const options = connections.map((conn) => {
-    const name = conn.name ? conn.name : conn.url;
-
-    return (
-      <option key={conn.id} value={conn.id}>
-        {name}
-      </option>
-    );
-  });
-
   return (
     <div className="terminologyManager__backend__selector">
       {label}
-      <HTMLSelect
-        className="bp3-minimal"
-        value={selected}
-        onChange={(e) => {
-          setSelected(e.target.value);
-        }}
-      >
-        <option>Select backend...</option>
-        {options}
-      </HTMLSelect>
+      <CommonConnectionSelector
+        connections={connections}
+        selected={selected}
+        setSelected={setSelected}
+      />
     </div>
   );
 };
@@ -71,8 +49,64 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   fhirServerConnections,
   onSave,
 }) => {
+  const [bundle, setBundle] = useState<R4.IBundle>(
+    terminologyBundle || {
+      resourceType: "Bundle",
+      entry: [],
+    }
+  );
+
   const [selectedSource, setSelectedSource] = useState(undefined);
   const [selectedTarget, setSelectedTarget] = useState(undefined);
+  const [currentAction, setCurrentAction] = useState(ActionType.UPLOAD);
+
+  const addValueSetToBundle = (valueSet) => {
+    const newBundle = Object.assign({}, bundle);
+
+    newBundle.entry.push({
+      resource: valueSet,
+    });
+
+    setBundle(newBundle);
+  };
+
+  const leftChildren = (
+    <>
+      <Button
+        className="bp3-minimal"
+        icon="upload"
+        text="Upload"
+        onClick={() => setCurrentAction(ActionType.UPLOAD)}
+      />
+      <Tooltip
+        content="Select source connection to search"
+        disabled={!!selectedSource}
+      >
+        <Button
+          className="bp3-minimal"
+          icon="search"
+          text="Search"
+          disabled={!selectedSource}
+          onClick={() => setCurrentAction(ActionType.SEARCH)}
+        />
+      </Tooltip>
+      <Tooltip
+        content="Select target connection to save"
+        disabled={!!selectedTarget}
+      >
+        <Button
+          className="bp3-minimal"
+          icon="floppy-disk"
+          text="Save"
+          disabled={!selectedTarget}
+          onClick={() => {
+            console.log("[terminology-manager] Clicked save.");
+            onSave(bundle);
+          }}
+        />
+      </Tooltip>
+    </>
+  );
 
   const rightChildren = (
     <>
@@ -92,36 +126,27 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   );
 
   const findFhirConnection = (uuid) => {
-    let found;
-
-    fhirServerConnections.forEach((connection) => {
-      if (connection.id === uuid) {
-        found = connection;
-      }
-    });
-
-    return found;
-  };
-
-  console.log("fhirServerConnections", fhirServerConnections);
-
-  const bundle: R4.IBundle = terminologyBundle || {
-    resourceType: "Bundle",
-    entry: [],
+    return fhirServerConnections.find((connection) => connection.id === uuid);
   };
 
   return (
-    <div className="terminologyManager">
-      <ListPane bundle={bundle} />
-      <ActionPane />
+    <div className="terminologyManager__wrapper">
+      <Toolbar
+        title="TERMINOLOGY MANAGER"
+        className="terminologyManager__toolbar"
+        leftChildren={leftChildren}
+        rightChildren={rightChildren}
+      />
+      <div className="terminologyManager__window">
+        <ListPane bundle={bundle} />
+        <ActionPane
+          action={currentAction}
+          fhirConnection={findFhirConnection(selectedSource)}
+          addValueSetToBundle={addValueSetToBundle}
+        />
+      </div>
     </div>
   );
 };
 
-export {
-  TerminologyManager,
-  AuthType,
-  AuthConfig,
-  FHIRServerConfig,
-  TerminologyManagerProps,
-};
+export { TerminologyManager, TerminologyManagerProps };

@@ -3,6 +3,8 @@ import { useDropzone } from "react-dropzone";
 
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
+import "./UploadPane.scss";
+
 interface UploadPaneProps {
   bundle: R4.IBundle;
   setBundle: (bundle: R4.IBundle) => void;

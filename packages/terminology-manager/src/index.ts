@@ -1,26 +1,20 @@
 import {
   TerminologyManager,
-  AuthType,
-  AuthConfig,
-  FHIRServerConfig,
   TerminologyManagerProps,
 } from "./TerminologyManager";
 
-import { ActionPane, ActionType, ActionPaneProps } from "./ActionPane";
+import { ActionPane, ActionType, ActionPaneProps } from "./layout/ActionPane";
 
-import { DetailsPane, DetailsPaneProps } from "./DetailsPane";
+import { DetailsPane, DetailsPaneProps } from "./panes/DetailsPane";
 
-import { SearchPane, SearchPaneProps } from "./SearchPane";
+import { SearchPane, SearchPaneProps } from "./panes/search/SearchPane";
 
-import { UploadPane, UploadPaneProps } from "./UploadPane";
+import { UploadPane, UploadPaneProps } from "./panes/upload/UploadPane";
 
-import { ListPane } from "./ListPane";
+import { ListPane } from "./layout/ListPane";
 
 export {
   TerminologyManager,
-  AuthType,
-  AuthConfig,
-  FHIRServerConfig,
   TerminologyManagerProps,
   ActionPane,
   ActionType,

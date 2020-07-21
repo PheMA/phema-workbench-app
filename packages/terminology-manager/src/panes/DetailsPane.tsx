@@ -3,10 +3,10 @@ import React from "react";
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
 interface DetailsPaneProps {
-  valueset: R4.IValueSet;
+  resource: R4.IValueSet | R4.ICodeSystem;
 }
 
-const DetailsPane: React.FC<DetailPaneProps> = ({ valueset }) => {
+const DetailsPane: React.FC<DetailPaneProps> = ({ resource }) => {
   return <div className="terminologyManager__detailsPane">Details</div>;
 };
 

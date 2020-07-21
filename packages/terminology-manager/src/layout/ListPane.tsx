@@ -12,7 +12,7 @@ import {
 
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
-const testBundle = require("./bundle.test.json");
+// const testBundle = require("./bundle.test.json");
 
 interface ListPaneProps {
   bundle: R4.IBundle;
@@ -33,11 +33,13 @@ const bundleToTreeNodes = (bundle: R4.IBundle): ITreeNode[] => {
 };
 
 const ListPane: React.FC<ListPaneProps> = ({ bundle }) => {
-  const nodes = bundleToTreeNodes(testBundle);
+  const nodes = bundleToTreeNodes(bundle);
 
   return (
-    <div className="terminologyManager__listPane">
-      <div className="terminologyManager__listPane__title">Value Sets</div>
+    <div className="terminologyManager__window__listPane">
+      <div className="terminologyManager__window__listPane__title">
+        Value Sets
+      </div>
       <Tree
         contents={nodes}
         // onNodeClick={this.handleNodeClick}

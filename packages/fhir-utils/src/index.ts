@@ -1,3 +1,6 @@
 import * as BundleUtils from "./bundle";
+import * as SearchUtils from "./search";
+import * as TerminologyUtils from "./terminology";
+import * as FHIRUtils from "./utils";
 
-export { BundleUtils };
+export { BundleUtils, SearchUtils, TerminologyUtils, FHIRUtils };
