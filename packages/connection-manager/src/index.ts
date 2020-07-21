@@ -6,6 +6,8 @@ import { ConnectionManager } from "./ConnectionManager";
 import { ConnectionContainer } from "./ConnectionContainer";
 import { ConnectionList } from "./ConnectionList";
 
+import { emptyConfig } from "./detaults";
+
 import {
   ConnectionNameField,
   FhirBaseUrlField,
@@ -26,6 +28,7 @@ export {
   OmopConnectionEditor,
   WorkbenchConnectionEditor,
   ConnectionList,
+  emptyConfig,
   // fields
   ConnectionNameField,
   FhirBaseUrlField,

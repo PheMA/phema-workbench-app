@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SplitPane from "react-split-pane";
 
-import { ConnectionManager } from "@phema/connection-manager";
+import { emptyConfig, ConnectionManager } from "@phema/connection-manager";
 
 import Phenotypes from "../phenotypes/Phenotypes.jsx";
 import Details from "../details/Details.jsx";
@@ -23,6 +23,26 @@ const Main = (props) => {
   } = props;
 
   const [connections, setConnections] = useState(undefined);
+
+  useEffect(() => {
+    const fetchConnections = async () => {
+      localForage.getItem("connections").then((connections) => {
+        if (connections) {
+          setConnections(connections);
+        } else {
+          setConnections(emptyConfig());
+        }
+      });
+    };
+
+    fetchConnections();
+  }, []);
+
+  useEffect(() => {
+    localForage.setItem("connections", connections).then(() => {
+      console.log("Connections saved.");
+    });
+  }, [connections]);
 
   return (
     <div id="phemaWorkbenchMain" className="main">

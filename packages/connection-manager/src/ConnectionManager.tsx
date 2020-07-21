@@ -97,19 +97,19 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
   connections,
   setConnections,
 }) => {
+  if (!connections) {
+    return null;
+  }
+
   const [modalOpen, setModalOpen] = useState(false);
 
-  const [connectionsInternal, setConnectionsInternal] = useState(
-    connections || emptyConfig()
-  );
+  const [connectionsInternal, setConnectionsInternal] = useState(connections);
 
   const [selectedTab, setSelectedTab] = useState(ConnectionType.FHIR);
 
   useEffect(() => {
     setConnections(connectionsInternal);
   }, [connectionsInternal]);
-
-  connections = connections || emptyConfig();
 
   return (
     <>
