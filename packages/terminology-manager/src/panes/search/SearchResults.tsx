@@ -7,7 +7,8 @@ import { HTMLTable, Button, Dialog } from "@blueprintjs/core";
 import { TerminologyUtils, FHIRUtils } from "@phema/fhir-utils";
 
 interface SearchResultsProps {
-  bundle: R4.IBundle;
+  terminologyBundle: R4.IBundle;
+  searchResultsBundle: R4.IBundle;
   fhirConnection: FHIRConnection;
   addValueSetToBundle: (resource: R4.IValueSet) => void;
 }
@@ -50,11 +51,12 @@ const ValueSetExpansion: React.RC<valueSetToExpansionProps> = ({
 };
 
 const SearchResults: React.FC<SearchResultsProps> = ({
-  bundle,
+  terminologyBundle,
+  searchResultsBundle,
   fhirConnection,
   addValueSetToBundle,
 }) => {
-  if (!bundle) {
+  if (!searchResultsBundle) {
     return null;
   }
 
@@ -75,8 +77,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
     });
   }, [valueSetToExpand]);
 
-  if (bundle.entry) {
-    const rows = bundle.entry.map((entry) => {
+  if (searchResultsBundle.entry) {
+    const rows = searchResultsBundle.entry.map((entry) => {
       const { resource } = entry;
       return (
         <tr key={resource.id}>
@@ -105,6 +107,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     addValueSetToBundle(valueSet);
                   });
                 }}
+                disabled={TerminologyUtils.bundleContainsValueSet({
+                  bundle: terminologyBundle,
+                  valueSet: resource,
+                })}
               >
                 Add
               </Button>

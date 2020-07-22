@@ -15,4 +15,54 @@ const extractResources = (
   return resources;
 };
 
-export { extractResources };
+interface AddResourceToBundleParameters {
+  bundle: R4.IBundle;
+  resource: R4.IResource;
+  method?: string;
+  url?: string;
+}
+
+const addResourceToBundle = ({
+  bundle,
+  resource,
+  method,
+  url,
+}: AddResourceToBundleParameters): R4.IBundle => {
+  const newBundle: R4.IBundle = Object.assign({}, bundle);
+
+  if (!newBundle.entry) {
+    newBundle.entry = [];
+  }
+
+  newBundle.entry.push({
+    resource,
+    request: {
+      method: method || "POST",
+      url: url || resource.resourceType,
+    },
+  });
+
+  return newBundle;
+};
+
+interface RemoveResourceFromBundleParameters {
+  bundle: R4.IBundle;
+  index: number;
+}
+
+const removeResourceFromBundle = ({
+  bundle,
+  index,
+}: RemoveResourceFromBundleParameters): R4.IBundle => {
+  const newBundle: R4.IBundle = Object.assign({}, bundle);
+
+  if (!newBundle.entry) {
+    return newBundle;
+  }
+
+  newBundle.entry.splice(index, 1);
+
+  return newBundle;
+};
+
+export { extractResources, addResourceToBundle, removeResourceFromBundle };

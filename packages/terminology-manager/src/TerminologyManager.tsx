@@ -11,7 +11,9 @@ import { R4 } from "@ahryman40k/ts-fhir-types";
 import { ListPane, ActionPane } from "./index";
 
 import "./TerminologyManager.scss";
-import { ActionType } from "./pane/ActionPane";
+import { ActionType } from "./layout/ActionPane";
+
+import { TerminologyUtils, BundleUtils } from "@phema/fhir-utils";
 
 interface TerminologyManagerProps {
   terminologyBundle?: R4.IBundle;
@@ -52,6 +54,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   const [bundle, setBundle] = useState<R4.IBundle>(
     terminologyBundle || {
       resourceType: "Bundle",
+      type: "batch",
       entry: [],
     }
   );
@@ -60,12 +63,56 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   const [selectedTarget, setSelectedTarget] = useState(undefined);
   const [currentAction, setCurrentAction] = useState(ActionType.UPLOAD);
 
-  const addValueSetToBundle = (valueSet) => {
-    const newBundle = Object.assign({}, bundle);
+  const addValueSetBundle = (valueSet) => {
+    if (TerminologyUtils.bundleContainsValueSet({ bundle, valueSet })) {
+      return;
+    }
 
-    newBundle.entry.push({
+    let newBundle = BundleUtils.addResourceToBundle({
+      bundle,
       resource: valueSet,
     });
+
+    TerminologyUtils.extractValueSetDependencies({
+      fhirConnection: findFhirConnection(selectedSource),
+      valueSet,
+    })
+      .then((deps) => {
+        console.log("DEPENDENCIES", deps);
+
+        deps.forEach((dep) => {
+          if (dep.resourceType === "ValueSet") {
+            if (
+              TerminologyUtils.bundleContainsValueSet({ bundle, valueSet: dep })
+            ) {
+              return;
+            }
+          } else if (dep.resourceType === "CodeSystem") {
+            if (
+              TerminologyUtils.bundleContainsCodeSystem({
+                bundle,
+                codeSystem: dep,
+              })
+            ) {
+              return;
+            }
+          } else {
+            throw new Error("Unknown dependency type");
+          }
+
+          newBundle = BundleUtils.addResourceToBundle({
+            bundle: newBundle,
+            resource: dep,
+          });
+        });
+      })
+      .then(() => {
+        setBundle(newBundle);
+      });
+  };
+
+  const removeResourceFromBundle = (index) => {
+    const newBundle = BundleUtils.removeResourceFromBundle({ bundle, index });
 
     setBundle(newBundle);
   };
@@ -105,6 +152,33 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
           }}
         />
       </Tooltip>
+      <Button
+        className="bp3-minimal"
+        icon="download"
+        text="Download"
+        onClick={() => {
+          const download = (filename, content) => {
+            var element = document.createElement("a");
+            element.setAttribute(
+              "href",
+              "data:application/json;charset=utf-8," +
+                encodeURIComponent(content)
+            );
+            element.setAttribute("download", filename);
+
+            element.style.display = "none";
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+          };
+
+          //download("Terminology.bundle.json", JSON.stringify(bundle, " ", 2));
+
+          console.log(bundle);
+        }}
+      />
     </>
   );
 
@@ -138,11 +212,15 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
         rightChildren={rightChildren}
       />
       <div className="terminologyManager__window">
-        <ListPane bundle={bundle} />
+        <ListPane
+          bundle={bundle}
+          removeResourceFromBundle={removeResourceFromBundle}
+        />
         <ActionPane
           action={currentAction}
           fhirConnection={findFhirConnection(selectedSource)}
-          addValueSetToBundle={addValueSetToBundle}
+          terminologyBundle={bundle}
+          addValueSetToBundle={addValueSetBundle}
         />
       </div>
     </div>

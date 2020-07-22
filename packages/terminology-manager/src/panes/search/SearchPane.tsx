@@ -14,15 +14,15 @@ import { SearchResults } from "./SearchResults";
 interface SearchPaneProps {
   fhirConnection: FHIRConnection;
   addValueSetToBundle: (resource: R4.IValueSet) => void;
-  bundle: R4.IBundle;
-  setBundle: (bundle: R4.IBundle) => void;
+  terminologyBundle: R4.IBundle;
+  // setTerminologyBundle: (bundle: R4.IBundle) => void;
 }
 
 const SearchPane: React.FC<SearchPaneProps> = ({
   fhirConnection,
   addValueSetToBundle,
-  bundle,
-  setBundle,
+  terminologyBundle,
+  // setTerminologyBundle,
 }) => {
   const [canonicalUrl, setCanonicalUrl] = useState("");
   const [name, setName] = useState("");
@@ -108,7 +108,8 @@ const SearchPane: React.FC<SearchPaneProps> = ({
       </div>
       <div className="terminologyManager__searchPane__results">
         <SearchResults
-          bundle={searchResultsBundle}
+          terminologyBundle={terminologyBundle}
+          searchResultsBundle={searchResultsBundle}
           fhirConnection={fhirConnection}
           addValueSetToBundle={addValueSetToBundle}
         />

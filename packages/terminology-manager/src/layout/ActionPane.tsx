@@ -16,6 +16,7 @@ interface ActionPaneProps {
   action: ActionType;
   valueset?: R4.IValueSet;
   fhirServerConfig?: FHIRServerConfig;
+  terminologyBundle: R4.IBundle;
   addValueSetToBundle?: (resource: R4.IValueSet) => void;
 }
 
@@ -23,6 +24,7 @@ const ActionPane: React.FC<ActionPaneProps> = ({
   action,
   resource,
   fhirConnection,
+  terminologyBundle,
   addValueSetToBundle,
 }) => {
   switch (action) {
@@ -32,6 +34,7 @@ const ActionPane: React.FC<ActionPaneProps> = ({
       return (
         <SearchPane
           fhirConnection={fhirConnection}
+          terminologyBundle={terminologyBundle}
           addValueSetToBundle={addValueSetToBundle}
         />
       );
