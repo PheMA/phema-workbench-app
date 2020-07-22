@@ -1,0 +1,16 @@
+.terminologyManager__listPane__node {
+  &__title {
+    margin-top: 10px;
+  }
+
+  &__subtitle {
+    font-size: x-small;
+    color: gray;
+  }
+}
+
+.terminologyManager__window__listPane__tree {
+  .bp3-tree-node {
+    margin-bottom: 5px;
+  }
+}

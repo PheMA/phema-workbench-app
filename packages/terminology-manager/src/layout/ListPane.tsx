@@ -13,7 +13,21 @@ import {
 
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
-// const testBundle = require("./bundle.test.json");
+interface NodeLabelProps {
+  title: string;
+  subtitle: string;
+}
+
+const NodeLabel: React.FC<NodeLabelProps> = ({ title, subtitle }) => {
+  return (
+    <div className="terminologyManager__listPane__node">
+      <div className="terminologyManager__listPane__node__title">{title}</div>
+      <div className="terminologyManager__listPane__node__subtitle">
+        {subtitle}
+      </div>
+    </div>
+  );
+};
 
 interface ListPaneProps {
   bundle: R4.IBundle;
@@ -28,10 +42,15 @@ const bundleToTreeNodes = (
   const nodes: ITreeNode[] = [];
 
   bundle?.entry?.forEach((entry, index) => {
+    const subtitle =
+      resourceType === "CodeSystem"
+        ? entry.resource?.url || entry.resource?.id
+        : entry.resource?.id || entry.resource?.url;
+
     if (entry.resource?.resourceType === resourceType) {
       nodes.push({
         id: entry.resource?.id,
-        label: entry.resource?.name,
+        label: <NodeLabel title={entry.resource?.name} subtitle={subtitle} />,
         icon: "th",
         secondaryLabel: (
           <Button
