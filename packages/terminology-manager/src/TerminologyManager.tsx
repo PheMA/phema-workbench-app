@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, Tooltip } from "@blueprintjs/core";
+import { Button, Tooltip, Toaster, Intent } from "@blueprintjs/core";
 
 import {
   Toolbar,
@@ -13,7 +13,8 @@ import { ListPane, ActionPane } from "./index";
 import "./TerminologyManager.scss";
 import { ActionType } from "./layout/ActionPane";
 
-import { TerminologyUtils, BundleUtils } from "@phema/fhir-utils";
+import { TerminologyUtils, BundleUtils, FHIRUtils } from "@phema/fhir-utils";
+import { TerminologyToaster } from "./TerminologyToaster";
 
 interface TerminologyManagerProps {
   terminologyBundle?: R4.IBundle;
@@ -42,6 +43,28 @@ const ConnectionSelector: React.FC<ConnectionSelectorProps> = ({
         selected={selected}
         setSelected={setSelected}
       />
+    </div>
+  );
+};
+
+interface SubmissionErrorsProps {
+  messages: string[];
+}
+
+const SubmissionErrors: React.FC<SubmissionErrorsProps> = ({ messages }) => {
+  const items = messages.map((message) => <li>{message}</li>);
+
+  return (
+    <div className="terminologyManager__submissionErrors">
+      <p>
+        The terminology bundle was successfully submitted, but there were the
+        following issues.
+      </p>
+      <ul>{items}</ul>
+      <p>
+        In most cases this just means the code systems or value sets already
+        exist.
+      </p>
     </div>
   );
 };
@@ -78,8 +101,6 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
       valueSet,
     })
       .then((deps) => {
-        console.log("DEPENDENCIES", deps);
-
         deps.forEach((dep) => {
           if (dep.resourceType === "ValueSet") {
             if (
@@ -138,16 +159,52 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
         />
       </Tooltip>
       <Tooltip
-        content="Select target connection to save"
+        content="Select target connection to submit"
         disabled={!!selectedTarget}
       >
         <Button
           className="bp3-minimal"
-          icon="floppy-disk"
-          text="Save"
+          icon="send-message"
+          text="Submit"
           disabled={!selectedTarget}
           onClick={() => {
-            console.log("[terminology-manager] Clicked save.");
+            const fhirConnection = findFhirConnection(selectedTarget);
+
+            FHIRUtils.submitBundle({
+              fhirConnection,
+              bundle,
+            })
+              .then((responseBundle) => {
+                console.log(responseBundle);
+
+                const issues = BundleUtils.collectErrorMessages({
+                  bundle: responseBundle,
+                });
+
+                if (issues.length > 0) {
+                  TerminologyToaster.show({
+                    message: <SubmissionErrors messages={issues} />,
+                    intent: Intent.WARNING,
+                    icon: "warning-sign",
+                    className: "terminologyManager__warningToast",
+                  });
+                } else {
+                  TerminologyToaster.show({
+                    message: `Successfully posted bundle to ${
+                      fhirConnection.name || fhirConnection.fhirBaseUrl
+                    }.`,
+                    intent: Intent.SUCCESS,
+                    icon: "tick",
+                  });
+                }
+              })
+              .catch((err) => {
+                TerminologyToaster.show({
+                  message: `Error posting terminology bundle: ${err}.`,
+                  intent: Intent.DANGER,
+                  icon: "warning-sign",
+                });
+              });
             onSave(bundle);
           }}
         />
@@ -174,9 +231,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
             document.body.removeChild(element);
           };
 
-          //download("Terminology.bundle.json", JSON.stringify(bundle, " ", 2));
-
-          console.log(bundle);
+          download("Terminology.bundle.json", JSON.stringify(bundle, " ", 2));
         }}
       />
     </>

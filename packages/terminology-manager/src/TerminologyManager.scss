@@ -24,6 +24,10 @@
 
       &__tree {
         margin-bottom: 10px;
+
+        .bp3-tree-node-content {
+          height: 40px;
+        }
       }
     }
 

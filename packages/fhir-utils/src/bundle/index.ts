@@ -65,4 +65,33 @@ const removeResourceFromBundle = ({
   return newBundle;
 };
 
-export { extractResources, addResourceToBundle, removeResourceFromBundle };
+interface CollectErrorMessagesParamaters {
+  bundle: R4.IBundle;
+}
+
+const collectErrorMessages = ({
+  bundle,
+}: CollectErrorMessagesParamaters): string[] => {
+  const messages = [];
+
+  if (!bundle?.entry) {
+    return messages;
+  }
+
+  bundle.entry.forEach((entry) => {
+    if (entry.response?.outcome) {
+      entry.response?.outcome.issue?.forEach((issue) => {
+        issue.diagnostics && messages.push(issue.diagnostics);
+      });
+    }
+  });
+
+  return messages;
+};
+
+export {
+  extractResources,
+  addResourceToBundle,
+  removeResourceFromBundle,
+  collectErrorMessages,
+};

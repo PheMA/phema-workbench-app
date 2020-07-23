@@ -32,15 +32,20 @@ async function get({
 interface FetchParameters {
   fhirConnection: FHIRConnection;
   url: string;
+  method?: string;
+  body?: object;
 }
 
 // simple wrapper around fetch to set headers
 async function fetch({
   fhirConnection,
   url,
+  method,
+  body,
 }: FetchParameters): Promise<R4.IResource> {
   const headers = {
     Accept: "application/json",
+    "Content-Type": "application/json",
   };
 
   if (fhirConnection.auth) {
@@ -51,7 +56,34 @@ async function fetch({
     }
   }
 
-  return global.fetch(url, { headers }).then((res) => res.json());
+  if (body && method === "GET") {
+    throw new Error("Cannot perform GET with body");
+  }
+
+  const config = {
+    headers,
+    method: method || "GET",
+    body: JSON.stringify(body),
+  };
+
+  return global.fetch(url, config).then((res) => res.json());
 }
 
-export { get, fetch };
+interface SubmitBundleParameters {
+  fhirConnection: FHIRConnection;
+  bundle: R4.IBundle;
+}
+
+async function submitBundle({
+  fhirConnection,
+  bundle,
+}: SubmitBundleParameters): Promise<R4.IBundle> {
+  return fetch({
+    fhirConnection,
+    url: fhirConnection.fhirBaseUrl,
+    method: "POST",
+    body: bundle,
+  }) as Promise<R4.IBundle>;
+}
+
+export { get, fetch, submitBundle };

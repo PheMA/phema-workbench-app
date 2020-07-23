@@ -82,13 +82,23 @@ async function extractValueSetDependencies({
 
   const dependencyResources = [];
 
-  dependencyResponses.forEach((response) => {
+  for (let i = 0; i < dependencyResponses.length; i++) {
+    const response = dependencyResponses[i];
+
     if (response.status === "fulfilled") {
       const resource = response.value;
 
       if (resource.resourceType === "ValueSet") {
         // We retrieved a ValueSet resource directly
         dependencyResources.push(resource);
+
+        // Recursively add value set dependencies
+        const recursiveDeps = await extractValueSetDependencies({
+          fhirConnection,
+          valueSet: resource,
+        });
+
+        dependencyResources.push(...recursiveDeps);
       } else if (resource.resourceType === "Bundle") {
         // We search for a code system by name (and maybe version)
         dependencyResources.push(resource.entry[0]?.resource);
@@ -96,11 +106,7 @@ async function extractValueSetDependencies({
     } else {
       console.warn("Error retrieving ValueSet dependency");
     }
-  });
-
-  console.log(dependencyResponses);
-
-  console.log("ASD", dependencyResources);
+  }
 
   return dependencyResources;
 }
