@@ -1,0 +1,11 @@
+{
+  "name": "@phema/terminology-utils",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "jszip": "^3.5.0",
+    "papaparse": "^5.2.0",
+    "slugify": "^1.4.4"
+  }
+}

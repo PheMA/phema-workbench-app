@@ -15,7 +15,6 @@ interface SearchPaneProps {
   fhirConnection: FHIRConnection;
   addValueSetToBundle: (resource: R4.IValueSet) => void;
   terminologyBundle: R4.IBundle;
-  // setTerminologyBundle: (bundle: R4.IBundle) => void;
 }
 
 const SearchPane: React.FC<SearchPaneProps> = ({

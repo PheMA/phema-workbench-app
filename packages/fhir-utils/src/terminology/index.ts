@@ -100,8 +100,10 @@ async function extractValueSetDependencies({
 
         dependencyResources.push(...recursiveDeps);
       } else if (resource.resourceType === "Bundle") {
-        // We search for a code system by name (and maybe version)
-        dependencyResources.push(resource.entry[0]?.resource);
+        if (resource.entry) {
+          // We search for a code system by name (and maybe version)
+          dependencyResources.push(resource.entry[0]?.resource);
+        }
       }
     } else {
       console.warn("Error retrieving ValueSet dependency");

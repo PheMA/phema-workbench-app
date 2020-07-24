@@ -104,7 +104,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     resourceType: "ValueSet",
                     resourceId: resource.id as string,
                   }).then((valueSet) => {
-                    addValueSetToBundle(valueSet);
+                    addValueSetToBundle(valueSet, fhirConnection);
                   });
                 }}
                 disabled={TerminologyUtils.bundleContainsValueSet({

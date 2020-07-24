@@ -39,7 +39,12 @@ const ActionPane: React.FC<ActionPaneProps> = ({
         />
       );
     default:
-      return <UploadPane />;
+      return (
+        <UploadPane
+          fhirConnection={fhirConnection}
+          addValueSetToBundle={addValueSetToBundle}
+        />
+      );
   }
 };
 

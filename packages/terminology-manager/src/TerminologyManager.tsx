@@ -86,9 +86,12 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   const [selectedTarget, setSelectedTarget] = useState(undefined);
   const [currentAction, setCurrentAction] = useState(ActionType.UPLOAD);
 
-  const addValueSetBundle = (valueSet) => {
+  const addValueSetBundle = async (
+    valueSet: R4.IValueSet,
+    sourceConnection: FHIRConnection
+  ) => {
     if (TerminologyUtils.bundleContainsValueSet({ bundle, valueSet })) {
-      return;
+      return Promise.resolve();
     }
 
     let newBundle = BundleUtils.addResourceToBundle({
@@ -96,40 +99,48 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
       resource: valueSet,
     });
 
-    TerminologyUtils.extractValueSetDependencies({
-      fhirConnection: findFhirConnection(selectedSource),
-      valueSet,
-    })
-      .then((deps) => {
-        deps.forEach((dep) => {
-          if (dep.resourceType === "ValueSet") {
-            if (
-              TerminologyUtils.bundleContainsValueSet({ bundle, valueSet: dep })
-            ) {
-              return;
-            }
-          } else if (dep.resourceType === "CodeSystem") {
-            if (
-              TerminologyUtils.bundleContainsCodeSystem({
-                bundle,
-                codeSystem: dep,
-              })
-            ) {
-              return;
-            }
-          } else {
-            throw new Error("Unknown dependency type");
-          }
-
-          newBundle = BundleUtils.addResourceToBundle({
-            bundle: newBundle,
-            resource: dep,
-          });
-        });
+    if (sourceConnection) {
+      return TerminologyUtils.extractValueSetDependencies({
+        fhirConnection: findFhirConnection(selectedSource),
+        valueSet,
       })
-      .then(() => {
-        setBundle(newBundle);
-      });
+        .then((deps) => {
+          deps.forEach((dep) => {
+            if (dep.resourceType === "ValueSet") {
+              if (
+                TerminologyUtils.bundleContainsValueSet({
+                  bundle,
+                  valueSet: dep,
+                })
+              ) {
+                return;
+              }
+            } else if (dep.resourceType === "CodeSystem") {
+              if (
+                TerminologyUtils.bundleContainsCodeSystem({
+                  bundle,
+                  codeSystem: dep,
+                })
+              ) {
+                return;
+              }
+            } else {
+              throw new Error("Unknown dependency type");
+            }
+
+            newBundle = BundleUtils.addResourceToBundle({
+              bundle: newBundle,
+              resource: dep,
+            });
+          });
+        })
+        .then(() => {
+          setBundle(newBundle);
+        });
+    } else {
+      setBundle(newBundle);
+      return Promise.resolve();
+    }
   };
 
   const removeResourceFromBundle = (index) => {
@@ -175,8 +186,6 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
               bundle,
             })
               .then((responseBundle) => {
-                console.log(responseBundle);
-
                 const issues = BundleUtils.collectErrorMessages({
                   bundle: responseBundle,
                 });

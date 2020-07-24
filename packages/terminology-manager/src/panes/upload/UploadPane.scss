@@ -28,7 +28,16 @@ $colors: (
     align-items: center;
 
     &--active {
+      height: 100%;
+      width: 100%;
+
       border: 2px dashed map-get($colors, primary);
+      border-radius: 5px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     &__text,
@@ -46,6 +55,11 @@ $colors: (
       &--active {
         color: map-get($colors, primary);
       }
+    }
+
+    &__pre {
+      font-family: monospace;
+      font-weight: bold;
     }
   }
 }
