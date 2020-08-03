@@ -28,7 +28,7 @@ const REQUIRED_OMOP_CONCEPT_SET_COLUMNS = [
 ];
 
 interface ValidateOmopConceptSetCsvParameters {
-  csv: File;
+  csv: File | string;
 }
 
 const validateOmopConceptSetCsv = async ({
@@ -57,7 +57,7 @@ const validateOmopConceptSetCsv = async ({
 };
 
 interface OmopCsvToValueSetsParameters {
-  csv: File;
+  csv: File | string;
 }
 
 const getOmopValueSetId = (valueSetId: string) => {

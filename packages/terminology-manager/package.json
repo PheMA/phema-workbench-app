@@ -9,7 +9,8 @@
     "@phema/workbench-common": "^1.0.0",
     "react": "^16.13.1",
     "react-dropzone": "^v10.1.4",
-    "use-debounce": "^3.4.3"
+    "use-debounce": "^3.4.3",
+    "jszip": "^3.5.0"
   },
   "devDependencies": {
     "@ahryman40k/ts-fhir-types": "^4.0.32"

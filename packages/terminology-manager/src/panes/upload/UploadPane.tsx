@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
+import JSZip from "jszip";
+
 import { R4 } from "@ahryman40k/ts-fhir-types";
 import { CSVUtils } from "@phema/terminology-utils";
 
@@ -29,6 +31,61 @@ interface ProcessUploadedFilesParameters {
   fhirConnection: FHIRConnection;
 }
 
+interface TryProcessCsvParameters {
+  file: File | string;
+  fhirConnection: FHIRConnection;
+  addValueSetToBundle: (valueSet: R4.IValueSet, callback: any) => Promise<void>;
+}
+
+const tryProcessCsv = ({ file, fhirConnection, addValueSetToBundle }) => {
+  CSVUtils.omopCsvToValueSets({ csv: file })
+    .then((valueSets) => {
+      for (let i = 0; i < valueSets.length; i++) {
+        addValueSetToBundle(valueSets[i], fhirConnection)
+          .then(() => {
+            TerminologyToaster.show({
+              message: `Successfully imported value set "${valueSets[i].name}"`,
+              intent: Intent.SUCCESS,
+              icon: "tick",
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+
+            let message;
+
+            if (typeof err === "string") {
+              message = `Failed to import ${valueSets[i].name}: ${err}.`;
+            } else if (err instanceof Error) {
+              message = `Failed to import ${valueSets[i].name}: ${err.message}.`;
+            } else {
+              `Failed to import ${valueSets[i].name}`;
+            }
+
+            TerminologyToaster.show({
+              message,
+              intent: Intent.DANGER,
+              icon: "warning-sign",
+            });
+          });
+      }
+    })
+    .catch((err) => {
+      const message =
+        typeof err === "string"
+          ? `Failed to import ${file.name}: ${err}.`
+          : `Failed to import ${file.name}`;
+
+      TerminologyToaster.show({
+        message,
+        intent: Intent.DANGER,
+        icon: "warning-sign",
+      });
+
+      console.log(err);
+    });
+};
+
 const processUploadedFiles = ({
   acceptedFiles,
   addValueSetToBundle,
@@ -38,53 +95,49 @@ const processUploadedFiles = ({
 
   acceptedFiles.forEach((file) => {
     if (file.name.endsWith("zip") || file.type === "application/zip") {
-    } else if (file.name.endsWith("csv") || file.type === "text/csv") {
-      CSVUtils.omopCsvToValueSets({ csv: file })
-        .then((valueSets) => {
-          for (let i = 0; i < valueSets.length; i++) {
-            addValueSetToBundle(valueSets[i], fhirConnection)
-              .then(() => {
-                TerminologyToaster.show({
-                  message: `Successfully imported value set "${valueSets[i].name}"`,
-                  intent: Intent.SUCCESS,
-                  icon: "tick",
-                });
-              })
-              .catch((err) => {
-                console.error(err);
+      new Promise((resolve, reject) => {
+        JSZip.loadAsync(file).then((zip) => {
+          let foundMappedConcepts = false;
 
-                let message;
+          zip.forEach((relativePath, zipEntry) => {
+            if (relativePath === "mappedConcepts.csv") {
+              foundMappedConcepts = true;
 
-                if (typeof err === "string") {
-                  message = `Failed to import ${valueSets[i].name}: ${err}.`;
-                } else if (err instanceof Error) {
-                  message = `Failed to import ${valueSets[i].name}: ${err.message}.`;
-                } else {
-                  `Failed to import ${valueSets[i].name}`;
-                }
-
-                TerminologyToaster.show({
-                  message,
-                  intent: Intent.DANGER,
-                  icon: "warning-sign",
+              zipEntry.async("string").then((contents) => {
+                tryProcessCsv({
+                  file: contents,
+                  fhirConnection,
+                  addValueSetToBundle,
                 });
               });
-          }
-        })
-        .catch((err) => {
-          const message =
-            typeof err === "string"
-              ? `Failed to import ${file.name}: ${err}.`
-              : `Failed to import ${file.name}`;
-
-          TerminologyToaster.show({
-            message,
-            intent: Intent.DANGER,
-            icon: "warning-sign",
+            }
           });
 
-          console.log(err);
+          if (!foundMappedConcepts) {
+            reject("'mappedConcepts.csv' not found in ZIP file");
+          }
         });
+      }).catch((err) => {
+        console.error(err);
+
+        let message;
+
+        if (typeof err === "string") {
+          message = `Failed to import: ${err}.`;
+        } else if (err instanceof Error) {
+          message = `Failed to import: ${err.message}.`;
+        } else {
+          `Failed to import ${file.name}`;
+        }
+
+        TerminologyToaster.show({
+          message,
+          intent: Intent.DANGER,
+          icon: "warning-sign",
+        });
+      });
+    } else if (file.name.endsWith("csv") || file.type === "text/csv") {
+      tryProcessCsv({ file, fhirConnection, addValueSetToBundle });
     } else if (file.name.endsWith("json") || file.type === "application/json") {
     } else {
       unsupportedFiles.push(file.name);

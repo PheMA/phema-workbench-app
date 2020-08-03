@@ -43,6 +43,10 @@ const omopConceptSetToFhirValueSet = ({
   const conceptNameIdx = conceptSet[0].indexOf("Concept Name");
   const vocabularyIdx = conceptSet[0].indexOf("Vocabulary");
 
+  // if we are dealing with the conceptSetExpression CSV file, we need to
+  // add explicit excludes
+  const excludeIdx = conceptSet[0].indexOf("Exclude");
+
   valueSet.id = conceptSetId; // this will like get ignored
   valueSet.url = `${PHEMA_WORKBENCH_VALUESET_PREFIX}/${conceptSetId}`;
   valueSet.status = R4.ValueSetStatusKind._active;
@@ -51,6 +55,7 @@ const omopConceptSetToFhirValueSet = ({
   valueSet.publisher = "PhEMA Workbench OMOP Concept Set Transformer";
 
   const codeLists = {};
+  const excludedLists = {};
 
   for (let i = 1; i < conceptSet.length; i++) {
     let conceptSetEntry = conceptSet[i];
@@ -62,10 +67,20 @@ const omopConceptSetToFhirValueSet = ({
 
     const codeSystemUrl = getCodeSystemUrl(conceptSetEntry[vocabularyIdx]);
 
-    if (!codeLists[codeSystemUrl]) {
-      codeLists[codeSystemUrl] = [codeableConcept];
+    if (excludeIdx != -1 && conceptSetEntry[excludeIdx] === "true") {
+      // exclude concept
+      if (!excludedLists[codeSystemUrl]) {
+        excludedLists[codeSystemUrl] = [codeableConcept];
+      } else {
+        excludedLists[codeSystemUrl].push(codeableConcept);
+      }
     } else {
-      codeLists[codeSystemUrl].push(codeableConcept);
+      // include concept
+      if (!codeLists[codeSystemUrl]) {
+        codeLists[codeSystemUrl] = [codeableConcept];
+      } else {
+        codeLists[codeSystemUrl].push(codeableConcept);
+      }
     }
   }
 
@@ -77,6 +92,19 @@ const omopConceptSetToFhirValueSet = ({
       concept: codeLists[system],
     });
   });
+
+  if (Object.keys(excludedLists).length > 0) {
+    debugger;
+
+    valueSet.compose.exclude = [];
+
+    Object.keys(excludedLists).forEach((system) => {
+      valueSet.compose.exclude.push({
+        system,
+        concept: codeLists[system],
+      });
+    });
+  }
 
   return valueSet;
 };
