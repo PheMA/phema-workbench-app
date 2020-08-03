@@ -7,7 +7,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { SearchUtils } from "@phema/fhir-utils";
 
 import "./SearchPane.scss";
-import { FormGroup, InputGroup } from "@blueprintjs/core";
+import { FormGroup, InputGroup, Spinner } from "@blueprintjs/core";
 
 import { SearchResults } from "./SearchResults";
 
@@ -21,8 +21,9 @@ const SearchPane: React.FC<SearchPaneProps> = ({
   fhirConnection,
   addValueSetToBundle,
   terminologyBundle,
-  // setTerminologyBundle,
 }) => {
+  const [processing, setProcessing] = useState(false);
+
   const [canonicalUrl, setCanonicalUrl] = useState("");
   const [name, setName] = useState("");
   const [identifier, setIdentifier] = useState("");
@@ -41,15 +42,19 @@ const SearchPane: React.FC<SearchPaneProps> = ({
       identifier,
     };
 
+    setProcessing(true);
+
     SearchUtils.search({
       fhirConnection,
       resourceType: "ValueSet",
       parameters,
     })
       .then((resultBundle) => {
+        setProcessing(false);
         setSearchResultsBundle(resultBundle);
       })
       .catch((err) => {
+        setProcessing(false);
         console.log("Search Error", err);
       });
   };
@@ -64,6 +69,21 @@ const SearchPane: React.FC<SearchPaneProps> = ({
   useEffect(() => {
     debouncedSearch(canonicalUrl, name, identifier, fhirConnection);
   }, [canonicalUrl, name, identifier, fhirConnection]);
+
+  const main = processing ? (
+    <div className="terminologyManager__uploadPane__spinner">
+      <Spinner />
+    </div>
+  ) : (
+    <div className="terminologyManager__searchPane__results">
+      <SearchResults
+        terminologyBundle={terminologyBundle}
+        searchResultsBundle={searchResultsBundle}
+        fhirConnection={fhirConnection}
+        addValueSetToBundle={addValueSetToBundle}
+      />
+    </div>
+  );
 
   return (
     <div className="terminologyManager__searchPane">
@@ -105,14 +125,7 @@ const SearchPane: React.FC<SearchPaneProps> = ({
           />
         </FormGroup>
       </div>
-      <div className="terminologyManager__searchPane__results">
-        <SearchResults
-          terminologyBundle={terminologyBundle}
-          searchResultsBundle={searchResultsBundle}
-          fhirConnection={fhirConnection}
-          addValueSetToBundle={addValueSetToBundle}
-        />
-      </div>
+      {main}
     </div>
   );
 };

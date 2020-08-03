@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 import JSZip from "jszip";
@@ -8,7 +8,7 @@ import { CSVUtils } from "@phema/terminology-utils";
 
 import "./UploadPane.scss";
 import { TerminologyToaster } from "../../TerminologyToaster";
-import { Intent } from "@blueprintjs/core";
+import { Intent, Spinner } from "@blueprintjs/core";
 
 interface UnsupportedFilesProps {
   filenames: string[];
@@ -37,11 +37,17 @@ interface TryProcessCsvParameters {
   addValueSetToBundle: (valueSet: R4.IValueSet, callback: any) => Promise<void>;
 }
 
-const tryProcessCsv = ({ file, fhirConnection, addValueSetToBundle }) => {
-  CSVUtils.omopCsvToValueSets({ csv: file })
+const tryProcessCsv = async ({
+  file,
+  fhirConnection,
+  addValueSetToBundle,
+}): Promise<void> => {
+  return CSVUtils.omopCsvToValueSets({ csv: file })
     .then((valueSets) => {
+      const promises = [];
+
       for (let i = 0; i < valueSets.length; i++) {
-        addValueSetToBundle(valueSets[i], fhirConnection)
+        let p = addValueSetToBundle(valueSets[i], fhirConnection)
           .then(() => {
             TerminologyToaster.show({
               message: `Successfully imported value set "${valueSets[i].name}"`,
@@ -68,7 +74,11 @@ const tryProcessCsv = ({ file, fhirConnection, addValueSetToBundle }) => {
               icon: "warning-sign",
             });
           });
+
+        promises.push(p);
       }
+
+      return Promise.allSettled(promises);
     })
     .catch((err) => {
       const message =
@@ -86,16 +96,18 @@ const tryProcessCsv = ({ file, fhirConnection, addValueSetToBundle }) => {
     });
 };
 
-const processUploadedFiles = ({
+const processUploadedFiles = async ({
   acceptedFiles,
   addValueSetToBundle,
   fhirConnection,
-}: ProcessUploadedFilesParameters): void => {
+}: ProcessUploadedFilesParameters): Promise<void> => {
+  const promises = [];
+
   const unsupportedFiles: string[] = [];
 
   acceptedFiles.forEach((file) => {
     if (file.name.endsWith("zip") || file.type === "application/zip") {
-      new Promise((resolve, reject) => {
+      let p = new Promise((resolve, reject) => {
         JSZip.loadAsync(file).then((zip) => {
           let foundMappedConcepts = false;
 
@@ -103,12 +115,12 @@ const processUploadedFiles = ({
             if (relativePath === "mappedConcepts.csv") {
               foundMappedConcepts = true;
 
-              zipEntry.async("string").then((contents) => {
-                tryProcessCsv({
+              return zipEntry.async("string").then((contents) => {
+                return tryProcessCsv({
                   file: contents,
                   fhirConnection,
                   addValueSetToBundle,
-                });
+                }).then(() => resolve());
               });
             }
           });
@@ -136,6 +148,8 @@ const processUploadedFiles = ({
           icon: "warning-sign",
         });
       });
+
+      promises.push(p);
     } else if (file.name.endsWith("csv") || file.type === "text/csv") {
       tryProcessCsv({ file, fhirConnection, addValueSetToBundle });
     } else if (file.name.endsWith("json") || file.type === "application/json") {
@@ -151,6 +165,8 @@ const processUploadedFiles = ({
       icon: "warning-sign",
     });
   }
+
+  return Promise.allSettled(promises);
 };
 
 interface UploadPaneProps {
@@ -162,77 +178,99 @@ const UploadPane: React.FC<UploadPaneProps> = ({
   fhirConnection,
   addValueSetToBundle,
 }) => {
+  const [processing, setProcessing] = useState(false);
+
   const onDrop = useCallback(
     (acceptedFiles) => {
+      setProcessing(true);
+
       processUploadedFiles({
         acceptedFiles,
         addValueSetToBundle,
         fhirConnection,
-      });
+      })
+        .then(() => {
+          setProcessing(false);
+
+          console.log("ASDASD");
+        })
+        .catch((err) => {
+          console.log(err);
+
+          setProcessing(false);
+        });
     },
     [fhirConnection]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  return (
-    <div className="terminologyManager__uploadPane">
-      <div
-        className={`terminologyManager__uploadPane__dropzone${
-          isDragActive ? "--active" : ""
-        }`}
-        {...getRootProps()}
-      >
-        <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>Drop the files here ...</p>
-        ) : (
-          <div>
-            <p>
-              Drag and drop any of the following types of files here, or click
-              to select
-            </p>
-            <div>
-              <ul>
-                <li>
-                  FHIR{" "}
-                  <span className="terminologyManager__uploadPane__dropzone__pre">
-                    ValueSet
-                  </span>
-                  ,{" "}
-                  <span className="terminologyManager__uploadPane__dropzone__pre">
-                    CodeSystem
-                  </span>{" "}
-                  or{" "}
-                  <span className="terminologyManager__uploadPane__dropzone__pre">
-                    Bundle
-                  </span>{" "}
-                  resources in JSON format
-                </li>
-                <li>
-                  <span className="terminologyManager__uploadPane__dropzone__pre">
-                    exportedConceptSet
-                  </span>{" "}
-                  ZIP files exported from OHDSI Atlas
-                </li>
-                <li>
-                  Individual CSV files (e.g.{" "}
-                  <span className="terminologyManager__uploadPane__dropzone__pre">
-                    includedConcepts.csv
-                  </span>
-                  ) exported from OHDSI Atlas
-                </li>
-              </ul>
-            </div>
-            <p>
-              Select a source connection to search for referenced value sets and
-              code systems during import.
-            </p>
-          </div>
-        )}
+  if (processing) {
+    return (
+      <div className="terminologyManager__uploadPane__spinner">
+        <Spinner />
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className="terminologyManager__uploadPane">
+        <div
+          className={`terminologyManager__uploadPane__dropzone${
+            isDragActive ? "--active" : ""
+          }`}
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p>Drop the files here ...</p>
+          ) : (
+            <div>
+              <p>
+                Drag and drop any of the following types of files here, or click
+                to select
+              </p>
+              <div>
+                <ul>
+                  <li>
+                    FHIR{" "}
+                    <span className="terminologyManager__uploadPane__dropzone__pre">
+                      ValueSet
+                    </span>
+                    ,{" "}
+                    <span className="terminologyManager__uploadPane__dropzone__pre">
+                      CodeSystem
+                    </span>{" "}
+                    or{" "}
+                    <span className="terminologyManager__uploadPane__dropzone__pre">
+                      Bundle
+                    </span>{" "}
+                    resources in JSON format
+                  </li>
+                  <li>
+                    <span className="terminologyManager__uploadPane__dropzone__pre">
+                      exportedConceptSet
+                    </span>{" "}
+                    ZIP files exported from OHDSI Atlas
+                  </li>
+                  <li>
+                    Individual CSV files (e.g.{" "}
+                    <span className="terminologyManager__uploadPane__dropzone__pre">
+                      includedConcepts.csv
+                    </span>
+                    ) exported from OHDSI Atlas
+                  </li>
+                </ul>
+              </div>
+              <p>
+                Select a source connection to search for referenced value sets
+                and code systems during import.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 };
 
 export { UploadPane, UploadPaneProps };

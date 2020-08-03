@@ -62,6 +62,21 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
   const [valueSetToExpand, setValueSetToExpand] = useState(undefined);
   const [valueSetExpansion, setValueSetExpansion] = useState(undefined);
+  const [currentlyAdding, setCurrentlyAdding] = useState(
+    new Map<string, boolean>()
+  );
+
+  const addToCurrentlyAdding = (key) => {
+    const newCurrentlyAdding = new Map(currentlyAdding);
+    newCurrentlyAdding.set(key, true);
+    setCurrentlyAdding(newCurrentlyAdding);
+  };
+
+  const removeFromCurrentlyAdding = (key) => {
+    const newCurrentlyAdding = new Map(currentlyAdding);
+    newCurrentlyAdding.delete(key);
+    setCurrentlyAdding(newCurrentlyAdding);
+  };
 
   useEffect(() => {
     if (!valueSetToExpand) {
@@ -90,6 +105,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <div className="terminologyManager__searchPane__results__actions">
               <Button
                 minimal
+                loading={resource.id === valueSetToExpand && !valueSetExpansion}
                 onClick={() => {
                   setValueSetToExpand(resource.id);
                 }}
@@ -98,14 +114,29 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               </Button>
               <Button
                 minimal
+                loading={currentlyAdding.get(resource.id as string)}
                 onClick={() => {
+                  addToCurrentlyAdding(resource.id as string);
+
                   FHIRUtils.get({
                     fhirConnection: fhirConnection,
                     resourceType: "ValueSet",
                     resourceId: resource.id as string,
-                  }).then((valueSet) => {
-                    addValueSetToBundle(valueSet, fhirConnection);
-                  });
+                  })
+                    .then((valueSet) => {
+                      addValueSetToBundle(valueSet, fhirConnection)
+                        .then(() => {
+                          removeFromCurrentlyAdding(resource.id as string);
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                          removeFromCurrentlyAdding(resource.id as string);
+                        });
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      removeFromCurrentlyAdding(resource.id as string);
+                    });
                 }}
                 disabled={TerminologyUtils.bundleContainsValueSet({
                   bundle: terminologyBundle,
@@ -140,6 +171,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           isOpen={!!valueSetExpansion}
           onClose={() => {
             setValueSetExpansion(undefined);
+            setValueSetToExpand(undefined);
           }}
         >
           <ValueSetExpansion valueSet={valueSetExpansion} />
