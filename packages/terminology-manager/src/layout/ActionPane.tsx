@@ -18,6 +18,7 @@ interface ActionPaneProps {
   fhirServerConfig?: FHIRServerConfig;
   terminologyBundle: R4.IBundle;
   addValueSetToBundle?: (resource: R4.IValueSet) => void;
+  addCodeSystemToBundle?: (resource: R4.ICodeSystem) => void;
 }
 
 const ActionPane: React.FC<ActionPaneProps> = ({
@@ -26,6 +27,7 @@ const ActionPane: React.FC<ActionPaneProps> = ({
   fhirConnection,
   terminologyBundle,
   addValueSetToBundle,
+  addCodeSystemToBundle,
 }) => {
   switch (action) {
     case ActionType.DETAILS:
@@ -43,6 +45,7 @@ const ActionPane: React.FC<ActionPaneProps> = ({
         <UploadPane
           fhirConnection={fhirConnection}
           addValueSetToBundle={addValueSetToBundle}
+          addCodeSystemToBundle={addCodeSystemToBundle}
         />
       );
   }

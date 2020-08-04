@@ -10,6 +10,26 @@ import "./UploadPane.scss";
 import { TerminologyToaster } from "../../TerminologyToaster";
 import { Intent, Spinner } from "@blueprintjs/core";
 
+const showError = (err) => {
+  console.error(err);
+
+  let message;
+
+  if (typeof err === "string") {
+    message = `Failed to import: ${err}.`;
+  } else if (err instanceof Error) {
+    message = `Failed to import: ${err.message}.`;
+  } else {
+    `Failed to import ${file.name}`;
+  }
+
+  TerminologyToaster.show({
+    message,
+    intent: Intent.DANGER,
+    icon: "warning-sign",
+  });
+};
+
 interface UnsupportedFilesProps {
   filenames: string[];
 }
@@ -28,6 +48,7 @@ const UnsupportedFiles: React.RC<UnsupportedFilesProps> = ({ filenames }) => {
 interface ProcessUploadedFilesParameters {
   acceptedFiles: File[];
   addValueSetToBundle: (valueSet: R4.IValueSet, callback: any) => Promise<void>;
+  addCodeSystemToBundle: (valueSet: R4.ICodeSystem) => void;
   fhirConnection: FHIRConnection;
 }
 
@@ -56,23 +77,7 @@ const tryProcessCsv = async ({
             });
           })
           .catch((err) => {
-            console.error(err);
-
-            let message;
-
-            if (typeof err === "string") {
-              message = `Failed to import ${valueSets[i].name}: ${err}.`;
-            } else if (err instanceof Error) {
-              message = `Failed to import ${valueSets[i].name}: ${err.message}.`;
-            } else {
-              `Failed to import ${valueSets[i].name}`;
-            }
-
-            TerminologyToaster.show({
-              message,
-              intent: Intent.DANGER,
-              icon: "warning-sign",
-            });
+            showError(err);
           });
 
         promises.push(p);
@@ -81,24 +86,87 @@ const tryProcessCsv = async ({
       return Promise.allSettled(promises);
     })
     .catch((err) => {
-      const message =
-        typeof err === "string"
-          ? `Failed to import ${file.name}: ${err}.`
-          : `Failed to import ${file.name}`;
-
-      TerminologyToaster.show({
-        message,
-        intent: Intent.DANGER,
-        icon: "warning-sign",
-      });
-
-      console.log(err);
+      showError(err);
     });
+};
+
+interface TryProcessJsonParameters {
+  file: File | string;
+  fhirConnection: FHIRConnection;
+  addValueSetToBundle: (valueSet: R4.IValueSet, callback: any) => Promise<void>;
+  addCodeSystemToBundle: (valueSet: R4.ICodeSystem) => void;
+}
+
+const tryProcessJson = async ({
+  file,
+  fhirConnection,
+  addValueSetToBundle,
+  addCodeSystemToBundle,
+}): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("error", (err) => {
+      reject(err);
+    });
+
+    reader.addEventListener("load", (event) => {
+      try {
+        const resource = JSON.parse(event.target.result as string);
+
+        if (!resource.resourceType) {
+          reject("Not a value 'Bundle', 'ValueSet', or 'CodeSystem' resource");
+        }
+
+        if (resource.resourceType === "Bundle") {
+          if (resource?.entry.length < 1) {
+            // empty bundle
+            resolve();
+          }
+
+          const promises = [];
+
+          resource.entry.forEach((entry) => {
+            if (entry.resource?.resourceType === "ValueSet") {
+              promises.push(
+                addValueSetToBundle(entry.resource, fhirConnection)
+              );
+            } else if (entry.resource?.resourceType === "CodeSystem") {
+              addCodeSystemToBundle(entry.resource);
+
+              promises.push(Promise.resolve());
+            }
+          });
+
+          Promise.allSettled(promises)
+            .then(() => {
+              resolve();
+            })
+            .catch((err) => reject(err));
+        } else if (resource.resourceType === "ValueSet") {
+          addValueSetToBundle(resource, fhirConnection)
+            .then(() => resolve())
+            .catch((err) => reject(err));
+        } else if (resource.resourceType === "CodeSystem") {
+          addCodeSystemToBundle(resource);
+
+          resolve();
+        } else {
+          reject("Not a value 'Bundle', 'ValueSet', or 'CodeSystem' resource");
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+    reader.readAsText(file);
+  });
 };
 
 const processUploadedFiles = async ({
   acceptedFiles,
   addValueSetToBundle,
+  addCodeSystemToBundle,
   fhirConnection,
 }: ProcessUploadedFilesParameters): Promise<void> => {
   const promises = [];
@@ -108,51 +176,53 @@ const processUploadedFiles = async ({
   acceptedFiles.forEach((file) => {
     if (file.name.endsWith("zip") || file.type === "application/zip") {
       let p = new Promise((resolve, reject) => {
-        JSZip.loadAsync(file).then((zip) => {
-          let foundMappedConcepts = false;
+        JSZip.loadAsync(file)
+          .then((zip) => {
+            let foundMappedConcepts = false;
 
-          zip.forEach((relativePath, zipEntry) => {
-            if (relativePath === "mappedConcepts.csv") {
-              foundMappedConcepts = true;
+            zip.forEach((relativePath, zipEntry) => {
+              if (relativePath === "mappedConcepts.csv") {
+                foundMappedConcepts = true;
 
-              return zipEntry.async("string").then((contents) => {
-                return tryProcessCsv({
-                  file: contents,
-                  fhirConnection,
-                  addValueSetToBundle,
-                }).then(() => resolve());
-              });
+                return zipEntry.async("string").then((contents) => {
+                  return tryProcessCsv({
+                    file: contents,
+                    fhirConnection,
+                    addValueSetToBundle,
+                  }).then(() => resolve());
+                });
+              }
+            });
+
+            if (!foundMappedConcepts) {
+              reject("'mappedConcepts.csv' not found in ZIP file");
             }
+          })
+          .catch((err) => {
+            reject(err);
           });
-
-          if (!foundMappedConcepts) {
-            reject("'mappedConcepts.csv' not found in ZIP file");
-          }
-        });
       }).catch((err) => {
-        console.error(err);
-
-        let message;
-
-        if (typeof err === "string") {
-          message = `Failed to import: ${err}.`;
-        } else if (err instanceof Error) {
-          message = `Failed to import: ${err.message}.`;
-        } else {
-          `Failed to import ${file.name}`;
-        }
-
-        TerminologyToaster.show({
-          message,
-          intent: Intent.DANGER,
-          icon: "warning-sign",
-        });
+        showError(err);
       });
 
       promises.push(p);
     } else if (file.name.endsWith("csv") || file.type === "text/csv") {
-      tryProcessCsv({ file, fhirConnection, addValueSetToBundle });
+      promises.push(
+        tryProcessCsv({
+          file,
+          fhirConnection,
+          addValueSetToBundle,
+        })
+      );
     } else if (file.name.endsWith("json") || file.type === "application/json") {
+      promises.push(
+        tryProcessJson({
+          file,
+          fhirConnection,
+          addValueSetToBundle,
+          addCodeSystemToBundle,
+        })
+      );
     } else {
       unsupportedFiles.push(file.name);
     }
@@ -172,11 +242,13 @@ const processUploadedFiles = async ({
 interface UploadPaneProps {
   fhirConnection: FHIRConnection;
   addValueSetToBundle: (valueSet: R4.IValueSet) => void;
+  addCodeSystemToBundle: (valueSet: R4.ICodeSystem) => void;
 }
 
 const UploadPane: React.FC<UploadPaneProps> = ({
   fhirConnection,
   addValueSetToBundle,
+  addCodeSystemToBundle,
 }) => {
   const [processing, setProcessing] = useState(false);
 
@@ -187,15 +259,20 @@ const UploadPane: React.FC<UploadPaneProps> = ({
       processUploadedFiles({
         acceptedFiles,
         addValueSetToBundle,
+        addCodeSystemToBundle,
         fhirConnection,
       })
-        .then(() => {
-          setProcessing(false);
+        .then((results) => {
+          results.forEach((result) => {
+            if (result.status === "rejected") {
+              showError(result.reason);
+            }
+          });
 
-          console.log("ASDASD");
+          setProcessing(false);
         })
         .catch((err) => {
-          console.log(err);
+          showError(err);
 
           setProcessing(false);
         });

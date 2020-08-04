@@ -52,7 +52,7 @@ interface SubmissionErrorsProps {
 }
 
 const SubmissionErrors: React.FC<SubmissionErrorsProps> = ({ messages }) => {
-  const items = messages.map((message) => <li>{message}</li>);
+  const items = messages.map((message, idx) => <li key={idx}>{message}</li>);
 
   return (
     <div className="terminologyManager__submissionErrors">
@@ -85,6 +85,15 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   const [selectedSource, setSelectedSource] = useState(undefined);
   const [selectedTarget, setSelectedTarget] = useState(undefined);
   const [currentAction, setCurrentAction] = useState(ActionType.UPLOAD);
+
+  const addCodeSystemToBundle = (codeSystem: R4.ICodeSystem) => {
+    let newBundle = BundleUtils.addResourceToBundle({
+      bundle,
+      resource: codeSystem,
+    });
+
+    setBundle(newBundle);
+  };
 
   const addValueSetBundle = async (
     valueSet: R4.IValueSet,
@@ -285,6 +294,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
           fhirConnection={findFhirConnection(selectedSource)}
           terminologyBundle={bundle}
           addValueSetToBundle={addValueSetBundle}
+          addCodeSystemToBundle={addCodeSystemToBundle}
         />
       </div>
     </div>
