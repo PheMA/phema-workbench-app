@@ -1,4 +1,5 @@
 import { R4 } from "@ahryman40k/ts-fhir-types";
+import { FHIRConnection } from "../connection";
 
 interface SearchParameters {
   fhirConnection: FHIRConnection;

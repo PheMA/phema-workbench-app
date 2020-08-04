@@ -1,5 +1,7 @@
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
+import { FHIRConnection } from "..";
+
 interface GetParameters {
   fhirConnection: FHIRConnection;
   resourceType: string;

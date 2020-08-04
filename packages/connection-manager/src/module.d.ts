@@ -1,41 +1,10 @@
+import { FHIRConnection } from "@phema/fhir-utils";
+
 export enum ConnectionType {
   I2B2 = "i2b2",
   OMOP = "omop",
   FHIR = "fhir",
   WORKBENCH = "workbench",
-}
-
-export enum AuthType {
-  Basic = "Basic",
-  Bearer = "Bearer",
-}
-
-export interface AuthConfig {
-  type: AuthType;
-  token: string;
-}
-
-export interface Connection {
-  id: string;
-  name?: string;
-}
-
-export interface Parameter {
-  id: string;
-  name: string;
-  value: string;
-}
-
-export interface FHIRServerParameter {
-  id: string;
-  name: string;
-  valueString: string;
-}
-
-export interface FHIRConnection extends Connection {
-  fhirBaseUrl: string;
-  auth?: AuthConfig;
-  parameters?: FHIRServerParameter[];
 }
 
 export interface OMOPParameter {

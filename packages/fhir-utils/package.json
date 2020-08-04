@@ -10,7 +10,7 @@
     "@ahryman40k/ts-fhir-types": "^4.0.32",
     "@types/jest": "^26.0.4",
     "jest": "^26.1.0",
-    "ts-jest": "^26.1.1",
+    "ts-jest": "^26.1.4",
     "typescript": "^3.9.6"
   }
 }

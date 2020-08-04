@@ -1,0 +1,3 @@
+{
+  "compilerOptions": { "downlevelIteration": true, "lib": ["es2020", "dom"] }
+}

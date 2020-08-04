@@ -1,6 +1,6 @@
 import { R4 } from "@ahryman40k/ts-fhir-types";
 
-import { FHIRUtils } from "../";
+import { FHIRUtils, FHIRConnection } from "../";
 
 interface ExpandParameters {
   fhirConnection: FHIRConnection;
@@ -88,21 +88,23 @@ async function extractValueSetDependencies({
     if (response.status === "fulfilled") {
       const resource = response.value;
 
-      if (resource.resourceType === "ValueSet") {
+      if ((resource as R4.IValueSet).resourceType === "ValueSet") {
         // We retrieved a ValueSet resource directly
         dependencyResources.push(resource);
 
         // Recursively add value set dependencies
         const recursiveDeps = await extractValueSetDependencies({
           fhirConnection,
-          valueSet: resource,
+          valueSet: resource as R4.IValueSet,
         });
 
         dependencyResources.push(...recursiveDeps);
-      } else if (resource.resourceType === "Bundle") {
-        if (resource.entry) {
+      } else if ((resource as R4.IBundle).resourceType === "Bundle") {
+        const bundle = resource as R4.IBundle;
+
+        if (bundle.entry) {
           // We search for a code system by name (and maybe version)
-          dependencyResources.push(resource.entry[0]?.resource);
+          dependencyResources.push(bundle.entry[0]?.resource);
         }
       }
     } else {

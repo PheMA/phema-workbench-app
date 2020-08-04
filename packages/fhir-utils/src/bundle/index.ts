@@ -17,8 +17,8 @@ const extractResources = (
 
 interface AddResourceToBundleParameters {
   bundle: R4.IBundle;
-  resource: R4.IResource;
-  method?: string;
+  resource: R4.IResourceList;
+  method?: R4.Bundle_RequestMethodKind;
   url?: string;
 }
 
@@ -37,7 +37,7 @@ const addResourceToBundle = ({
   newBundle.entry.push({
     resource,
     request: {
-      method: method || "POST",
+      method: method || R4.Bundle_RequestMethodKind._post,
       url: url || resource.resourceType,
     },
   });
@@ -65,13 +65,13 @@ const removeResourceFromBundle = ({
   return newBundle;
 };
 
-interface CollectErrorMessagesParamaters {
+interface CollectErrorMessagesParameters {
   bundle: R4.IBundle;
 }
 
 const collectErrorMessages = ({
   bundle,
-}: CollectErrorMessagesParamaters): string[] => {
+}: CollectErrorMessagesParameters): string[] => {
   const messages = [];
 
   if (!bundle?.entry) {
@@ -79,8 +79,10 @@ const collectErrorMessages = ({
   }
 
   bundle.entry.forEach((entry) => {
-    if (entry.response?.outcome) {
-      entry.response?.outcome.issue?.forEach((issue) => {
+    if (entry.response) {
+      const response: R4.IBundle_Response = entry.response;
+
+      (response.outcome as R4.IOperationOutcome)?.issue?.forEach((issue) => {
         issue.diagnostics && messages.push(issue.diagnostics);
       });
     }
