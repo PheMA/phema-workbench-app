@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "dagre-d3-react": "^0.2.4",
-    "graphlib-dot": "^0.6.4"
+    "graphlib-dot": "^0.6.4",
+    "graphviz-react": "^1.1.1"
   }
 }
