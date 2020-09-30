@@ -8,5 +8,9 @@
     "start": "yarn --cwd packages/workbench-app start",
     "build": "yarn --cwd packages/workbench-app build",
     "test": "yarn --cwd packages/fhir-utils test"
+  },
+  "resolutions": {
+    "node-forge": "^0.10.0",
+    "node-fetch": "^2.6.1"
   }
 }
