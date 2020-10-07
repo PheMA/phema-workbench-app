@@ -76,9 +76,9 @@ const omopCsvToValueSets = async ({
     for (let i = 1; i < data.length; i++) {
       if (!codeSystems[getOmopValueSetId(data[i][conceptIdIdx])]) {
         codeSystems[getOmopValueSetId(data[i][conceptIdIdx])] = [data[0]];
-      } else {
-        codeSystems[getOmopValueSetId(data[i][conceptIdIdx])].push(data[i]);
       }
+
+      codeSystems[getOmopValueSetId(data[i][conceptIdIdx])].push(data[i]);
     }
 
     const valueSets = [];
