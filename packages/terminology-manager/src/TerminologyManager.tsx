@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-import { Button, Tooltip, Toaster, Intent } from "@blueprintjs/core";
+import {
+  AnchorButton,
+  Button,
+  Tooltip,
+  Toaster,
+  Intent,
+} from "@blueprintjs/core";
 
 import {
   Toolbar,
@@ -170,7 +176,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
         content="Select source connection to search"
         disabled={!!selectedSource}
       >
-        <Button
+        <AnchorButton
           className="bp3-minimal"
           icon="search"
           text="Search"
@@ -182,7 +188,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
         content="Select target connection to submit"
         disabled={!!selectedTarget}
       >
-        <Button
+        <AnchorButton
           className="bp3-minimal"
           icon="send-message"
           text="Submit"
