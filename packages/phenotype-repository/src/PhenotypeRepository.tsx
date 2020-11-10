@@ -255,8 +255,7 @@ const PhenotypeItem = ({ item, index, phekb }) => {
 };
 
 PhenotypeItem.propTypes = {
-  item: PropTypes.string.isRequired,
-  filter: PropTypes.string.isRequired,
+  item: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
 };
 
@@ -268,7 +267,7 @@ const PhenotypeList = ({ phenotypes, filter, phekb }) => {
   return (
     <div className="phenotypes__list">
       {filtered.map((item, index) => (
-        <PhenotypeItem item={item} index={index} phekb={phekb} />
+        <PhenotypeItem key={index} item={item} index={index} phekb={phekb} />
       ))}
     </div>
   );

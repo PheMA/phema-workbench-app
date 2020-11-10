@@ -375,7 +375,7 @@ class PheKB {
     let results;
     do {
       results = await fetch(
-        `${this.baseUrl}/node?parameters[type]=phenotype&page=${page}`
+        `${this.baseUrl}/node?parameters[type]=phenotype&options[sort]=nid&page=${page}`
       ).then((res) => res.json());
 
       if (results.length > 0) {
