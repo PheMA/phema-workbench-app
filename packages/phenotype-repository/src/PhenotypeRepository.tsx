@@ -197,15 +197,20 @@ const PhenotypeItem = (item, index) => {
 
 PhenotypeItem.propTypes = {
   item: PropTypes.string.isRequired,
+  filter: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
 };
 
-const PhenotypeList = ({ phenotypes }) => {
+const PhenotypeList = ({ phenotypes, filter }) => {
   if (!phenotypes) return null;
+
+  const filtered = phenotypes.filter((p) =>
+    p.title.toUpperCase().includes(filter.toUpperCase())
+  );
 
   return (
     <div className="phenotypes__list">
-      {phenotypes.map((item, index) => PhenotypeItem(item, index))}
+      {filtered.map((item, index) => PhenotypeItem(item, index))}
     </div>
   );
 };
@@ -214,6 +219,7 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
   phekbUrl,
 }) => {
   let [phenotypes, setPhenotypes] = useState([]);
+  let [filter, setFilter] = useState("");
 
   // TODO: Move this to config
   const phekb = new PheKB(
@@ -237,11 +243,11 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
       <ActionHeader
         title="Phenotypes"
         searchAction={(filter) => {
-          console.log(filter);
+          setFilter(filter);
         }}
         addText="Add"
       />
-      <PhenotypeList phenotypes={phenotypes} />
+      <PhenotypeList phenotypes={phenotypes} filter={filter} />
     </div>
   );
 };
