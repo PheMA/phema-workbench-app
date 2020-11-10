@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import SplitPane from "react-split-pane";
 
 import { emptyConfig, ConnectionManager } from "@phema/connection-manager";
+import { PhenotypeRepository } from "@phema/phenotype-repository";
 
-import Phenotypes from "../phenotypes/Phenotypes.jsx";
 import Details from "../details/Details.jsx";
 import ExecutionLog from "../log/ExecutionLog";
 
@@ -59,7 +59,7 @@ const Main = (props) => {
           maxSize={-50}
           onDragFinished={resized}
         >
-          <Phenotypes localForage={localForage} />
+          <PhenotypeRepository localForage={localForage} />
           <ConnectionManager
             connections={connections}
             setConnections={setConnections}

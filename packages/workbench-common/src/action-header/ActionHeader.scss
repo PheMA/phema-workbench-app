@@ -14,4 +14,12 @@
     display: flex;
     align-items: center;
   }
+
+  &__actions {
+    display: flex;
+
+    button {
+      margin-left: 10px;
+    }
+  }
 }

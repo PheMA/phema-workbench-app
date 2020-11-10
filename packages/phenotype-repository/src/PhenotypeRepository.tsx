@@ -1,16 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Toaster, Position, Dialog, Button, Icon } from "@blueprintjs/core";
+import {
+  Toaster,
+  Position,
+  Dialog,
+  Button,
+  AnchorButton,
+  Icon,
+} from "@blueprintjs/core";
 import Dropzone from "react-dropzone";
 import numeral from "numeral";
 import moment from "moment";
 
 import { ActionHeader } from "@phema/workbench-common";
+import { PheKB } from "@phema/phekb-api";
 
-import { phenotypeListSelector } from "../../../store/phenotypes/selectors";
-import { fetchPhenotypeList } from "../../../store/phenotypes/actions";
+// TODO: Migrate to recoil and away from global state
+import { phenotypeListSelector } from "../../workbench-app/src/store/phenotypes/selectors";
+import { fetchPhenotypeList } from "../../workbench-app/src/store/phenotypes/actions";
+
+import "./PhenotypeRepository.scss";
+
+/*
 
 const acceptedFiles = [".zip", ".ZIP"];
 
@@ -18,25 +31,6 @@ const PhemaWorkbenchToaster = Toaster.create({
   className: "toaster",
   position: Position.TOP,
 });
-
-const PhenotypeItem = (item, index) => {
-  return (
-    <div key={index} className="phenotypes__list__item">
-      <span className="phenotypes__list__item__name">
-        <Icon icon="small-plus" />
-        <a href="#">{item.name}</a>
-      </span>
-      <span className="phenotypes__list__item__size">
-        {numeral(item.size).format("0.0 b")}
-      </span>
-    </div>
-  );
-};
-
-PhenotypeItem.propTypes = {
-  item: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-};
 
 const DropArea = (getRootProps, getInputProps, isDragActive) => (
   <div
@@ -169,82 +163,87 @@ const PhenotypeUploadQueue = (props) => {
   );
 };
 
-const PhenotypeList = (props) => {
-  const data = _.get(props, "phenotypes", []);
+*/
 
+const PhenotypeItem = (item, index) => {
   return (
-    <div className="phenotypes__list">
-      {data.map((item, index) => PhenotypeItem(item, index))}
+    <div key={index} className="phenotypes__list__item">
+      <div className="phenotypes__list__item__title">
+        <div className="phenotypes__list__item__icon">
+          <Icon icon="dot" />
+        </div>
+        <div className="phenotypes__list__item__name">
+          <span className="phenotypes__list__item__name__link">
+            <a href="#">{item.title}</a>
+          </span>
+
+          <span className="phenotypes__list__item__date">
+            {moment.unix(item.created).format("MMM Do, YYYY")}
+          </span>
+        </div>
+      </div>
+      <div className="phenotypes__list__item__actions">
+        <Button icon="play" minimal />
+        <AnchorButton
+          icon="globe-network"
+          minimal
+          href={item.uri.replace("/api", "")}
+          target="_blank"
+        />
+      </div>
     </div>
   );
 };
 
-class Phenotypes extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modalOpen: false,
-      phenotypes: [],
-    };
-  }
-
-  reloadStorage() {
-    // Hack until we have a backend
-    this.props.localForage.getItem("phenotypes").then((data) => {
-      this.setState({
-        phenotypes: data,
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.reloadStorage();
-
-    this.props.fetchPhenotypeList();
-  }
-
-  render() {
-    return (
-      <div className="phenotypes">
-        <ActionHeader
-          title="Phenotypes"
-          addAction={() => {
-            this.setState({ modalOpen: true });
-          }}
-          addText="Add"
-        />
-        <PhenotypeList phenotypes={this.props.phenotypes} />
-        <Dialog
-          isOpen={this.state.modalOpen}
-          title="UPLOAD PHENOTYPE"
-          style={{ width: "800px" }}
-          onClose={() => {
-            this.setState({ modalOpen: false });
-          }}
-        >
-          <AddPhenotype
-            onCancel={() => {
-              this.setState({ modalOpen: false });
-            }}
-            reloadStorage={this.reloadStorage.bind(this)}
-          />
-        </Dialog>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  phenotypes: phenotypeListSelector(state),
-});
-
-const mapDispatchToProps = {
-  fetchPhenotypeList,
+PhenotypeItem.propTypes = {
+  item: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
-const ConnectedPhenotypes = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Phenotypes);
+const PhenotypeList = ({ phenotypes }) => {
+  if (!phenotypes) return null;
 
-export default ConnectedPhenotypes;
+  return (
+    <div className="phenotypes__list">
+      {phenotypes.map((item, index) => PhenotypeItem(item, index))}
+    </div>
+  );
+};
+
+const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
+  phekbUrl,
+}) => {
+  let [phenotypes, setPhenotypes] = useState([]);
+
+  // TODO: Move this to config
+  const phekb = new PheKB(
+    "https://cors.phema.science:4321/http://dev-phekb.pantheonsite.io/api/"
+  );
+
+  useEffect(() => {
+    const getData = async () => {
+      let list = await phekb.getPhenotypes(100);
+
+      setPhenotypes(list);
+    };
+
+    getData();
+
+    return;
+  }, []);
+
+  return (
+    <div className="phenotypes">
+      <ActionHeader
+        title="Phenotypes"
+        searchAction={(filter) => {
+          console.log(filter);
+        }}
+        addText="Add"
+      />
+      <PhenotypeList phenotypes={phenotypes} />
+    </div>
+  );
+};
+
+export default PhenotypesRepository;
