@@ -9,6 +9,7 @@ import {
   Button,
   AnchorButton,
   Icon,
+  Spinner,
 } from "@blueprintjs/core";
 import Dropzone from "react-dropzone";
 import numeral from "numeral";
@@ -165,7 +166,55 @@ const PhenotypeUploadQueue = (props) => {
 
 */
 
-const PhenotypeItem = (item, index) => {
+interface PhenotypeSummaryProps {
+  uri: string;
+  phekb: PheKB;
+}
+
+const PhenotypeSummary: React.RC<PhenotypeSummaryProps> = ({ uri, phekb }) => {
+  let [summary, setSummary] = useState(undefined);
+
+  useEffect(() => {
+    const getData = async () => {
+      let phenotype = await phekb.getPhenotype(uri);
+
+      setSummary(phenotype);
+    };
+
+    getData();
+
+    return;
+  }, []);
+
+  if (!summary) {
+    return null; // TODO: add loading indicator
+  }
+
+  let markup;
+  if (
+    summary.includes &&
+    summary.includes("Access denied for user anonymous")
+  ) {
+    markup = "Access denied for user anonymous";
+  } else {
+    markup = summary?.body?.und && summary?.body?.und[0]?.safe_value;
+  }
+
+  if (!markup) {
+    markup = "No summary to display";
+  }
+
+  return (
+    <div
+      className="phenotype__summary"
+      dangerouslySetInnerHTML={{ __html: markup }}
+    />
+  );
+};
+
+const PhenotypeItem = ({ item, index, phekb }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <div key={index} className="phenotypes__list__item">
       <div className="phenotypes__list__item__title">
@@ -183,13 +232,23 @@ const PhenotypeItem = (item, index) => {
         </div>
       </div>
       <div className="phenotypes__list__item__actions">
-        <Button icon="play" minimal />
+        <Button icon="play" minimal onClick={() => setModalOpen(true)} />
         <AnchorButton
           icon="globe-network"
           minimal
           href={item.uri.replace("/api", "")}
           target="_blank"
         />
+        <Dialog
+          isOpen={modalOpen}
+          title={item.title}
+          style={{ width: "800px" }}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+        >
+          <PhenotypeSummary uri={item.uri} phekb={phekb} />
+        </Dialog>
       </div>
     </div>
   );
@@ -201,16 +260,16 @@ PhenotypeItem.propTypes = {
   index: PropTypes.number.isRequired,
 };
 
-const PhenotypeList = ({ phenotypes, filter }) => {
-  if (!phenotypes) return null;
-
+const PhenotypeList = ({ phenotypes, filter, phekb }) => {
   const filtered = phenotypes.filter((p) =>
     p.title.toUpperCase().includes(filter.toUpperCase())
   );
 
   return (
     <div className="phenotypes__list">
-      {filtered.map((item, index) => PhenotypeItem(item, index))}
+      {filtered.map((item, index) => (
+        <PhenotypeItem item={item} index={index} phekb={phekb} />
+      ))}
     </div>
   );
 };
@@ -218,7 +277,7 @@ const PhenotypeList = ({ phenotypes, filter }) => {
 const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
   phekbUrl,
 }) => {
-  let [phenotypes, setPhenotypes] = useState([]);
+  let [phenotypes, setPhenotypes] = useState(undefined);
   let [filter, setFilter] = useState("");
 
   // TODO: Move this to config
@@ -238,18 +297,22 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
     return;
   }, []);
 
-  return (
-    <div className="phenotypes">
-      <ActionHeader
-        title="Phenotypes"
-        searchAction={(filter) => {
-          setFilter(filter);
-        }}
-        addText="Add"
-      />
-      <PhenotypeList phenotypes={phenotypes} filter={filter} />
-    </div>
-  );
+  if (!phenotypes) {
+    return <Spinner className="phenotypes_loading" />;
+  } else {
+    return (
+      <div className="phenotypes">
+        <ActionHeader
+          title="Phenotypes"
+          searchAction={(filter) => {
+            setFilter(filter);
+          }}
+          addText="Add"
+        />
+        <PhenotypeList phenotypes={phenotypes} filter={filter} phekb={phekb} />
+      </div>
+    );
+  }
 };
 
 export default PhenotypesRepository;

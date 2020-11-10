@@ -356,6 +356,12 @@ class PheKB {
     );
   }
 
+  async getPhenotype(uri) {
+    return await fetch(`https://cors.phema.science:4321/${uri}`).then((res) =>
+      res.json()
+    );
+  }
+
   async getPhenotypes(maxPages) {
     // Use the following for testing so we don't keep hitting the server
     // return Promise.resolve(this.sortByName(staticList));
