@@ -17,7 +17,7 @@ The fastest way to get started is to run a Docker container using the
 version shown in the badge above, for example:
 
 ```
-docker run -p 8989:8989 phema/phema-workbench-app:0.4.3
+docker run -p 8989:8989 phema/phema-workbench-app
 ```
 
 To use the PhEMA Workbench application, you will also need to run the [API](https://github.com/PheMA/phema-workbench-api).
