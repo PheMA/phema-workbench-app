@@ -5,7 +5,7 @@
 # PhEMA Workbench App
 
 [![PhEMA](./repo-badge.svg)](https://projectphema.org "PhEMA")
-[![Build Status](https://travis-ci.org/PheMA/phema-workbench-app.svg?branch=master)](https://travis-ci.org/PheMA/phema-workbench-app "Travis CI build status")
+[![Build Status](https://travis-ci.com/PheMA/phema-workbench-app.svg?branch=master)](https://travis-ci.com/github/PheMA/phema-workbench-app/builds "Travis CI build status")
 [![Docker Image](https://images.microbadger.com/badges/version/phema/phema-workbench-app.svg)](https://hub.docker.com/r/phema/phema-workbench-app "Docker image version")
 
 [PhEMA](http://projectphema.org) Workbench web application and related
@@ -73,7 +73,6 @@ Running the following will ensure all packages and dependencies are installed.
 ```
 yarn
 ```
-
 
 > #### 3. Run Parcel
 
