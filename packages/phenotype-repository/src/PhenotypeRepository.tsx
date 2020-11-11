@@ -10,6 +10,7 @@ import {
   AnchorButton,
   Icon,
   Spinner,
+  NonIdealState,
 } from "@blueprintjs/core";
 import Dropzone from "react-dropzone";
 import numeral from "numeral";
@@ -277,18 +278,22 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
   phekbUrl,
 }) => {
   let [phenotypes, setPhenotypes] = useState(undefined);
+  let [error, setError] = useState(undefined);
   let [filter, setFilter] = useState("");
 
   // TODO: Move this to config
   const phekb = new PheKB(
-    "https://cors.phema.science:4321/http://dev-phekb.pantheonsite.io/api/"
+    "https://cors.phema.science:4321/http://dev-phekb.pantheonsite.io/api"
   );
 
   useEffect(() => {
     const getData = async () => {
-      let list = await phekb.getPhenotypes(100);
-
-      setPhenotypes(list);
+      try {
+        let list = await phekb.getPhenotypes(20);
+        setPhenotypes(list);
+      } catch (err) {
+        setError(err);
+      }
     };
 
     getData();
@@ -296,7 +301,15 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
     return;
   }, []);
 
-  if (!phenotypes) {
+  if (error) {
+    return (
+      <NonIdealState
+        icon={"offline"}
+        title="Error retrieving phenotypes"
+        description={error}
+      />
+    );
+  } else if (!phenotypes) {
     return <Spinner className="phenotypes_loading" />;
   } else {
     return (

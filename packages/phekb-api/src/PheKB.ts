@@ -376,7 +376,17 @@ class PheKB {
     do {
       results = await fetch(
         `${this.baseUrl}/node?parameters[type]=phenotype&options[sort]=nid&page=${page}`
-      ).then((res) => res.json());
+      )
+        .then(async (res) => {
+          if (res.status != 200) {
+            return Promise.reject(`${res.status}: ${await res.text()}`);
+          }
+
+          return res.json();
+        })
+        .catch((err) => {
+          return Promise.reject(err);
+        });
 
       if (results.length > 0) {
         phenotypes.push(...results);
