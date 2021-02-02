@@ -1,7 +1,8 @@
 {
   "name": "@phema/terminology-utils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "src/index.ts",
+  "type": "module",
   "license": "MIT",
   "dependencies": {
     "papaparse": "^5.2.0",
