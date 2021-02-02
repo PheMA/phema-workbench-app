@@ -109,4 +109,4 @@ const omopConceptSetToFhirValueSet = ({
   return valueSet;
 };
 
-export { omopConceptSetToFhirValueSet };
+export { omopConceptSetToFhirValueSet, omopVocabularies };
