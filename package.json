@@ -5,12 +5,18 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "yarn --cwd packages/workbench-app start",
-    "build": "yarn --cwd packages/workbench-app build",
+    "start": "yarn run build:worker && parcel serve --port 8989 --log-level verbose --host workbench.local.phema.science --https --cert ./certs/local.phema.science.fullchain.pem --key ./certs/local.phema.science.privkey.pem  --no-cache ./packages/workbench-app/index.html",
+    "watch": "parcel --port 8989 watch ./packages/workbench-app/index.html",
+    "build": "yarn run build:worker && parcel build --no-scope-hoist ./packages/workbench-app/index.html",
+    "build:worker": "parcel build --no-scope-hoist ./node_modules/monaco-editor/esm/vs/editor/editor.worker.js --no-source-maps",
     "test": "yarn --cwd packages/fhir-utils test"
   },
   "resolutions": {
     "node-forge": "^0.10.0",
     "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "parcel": "next",
+    "sass": "^1.26.10"
   }
 }

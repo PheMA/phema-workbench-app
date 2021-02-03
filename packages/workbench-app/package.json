@@ -2,13 +2,6 @@
   "name": "@phema/workbench-app",
   "version": "0.1.0",
   "description": "PhEMA Workbench App",
-  "scripts": {
-    "start": "yarn run build:worker && parcel serve --port 8989 --log-level verbose --host workbench.local.phema.science --https --cert ../../certs/local.phema.science.fullchain.pem --key ../../certs/local.phema.science.privkey.pem  --no-cache ./index.html",
-    "watch": "parcel --port 8989 watch index.html",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "yarn run build:worker && parcel build --no-scope-hoist index.html",
-    "build:worker": "parcel build --no-scope-hoist ../../node_modules/monaco-editor/esm/vs/editor/editor.worker.js --no-source-maps"
-  },
   "author": "PhEMA Collaborators",
   "license": "Apache-2.0",
   "dependencies": {
@@ -43,9 +36,5 @@
     "redux-saga": "^1.0.0",
     "regenerator-runtime": "^0.13.5",
     "uui": "^1.0.7"
-  },
-  "devDependencies": {
-    "parcel": "2.0.0-beta.1",
-    "sass": "^1.26.10"
   }
 }
