@@ -177,7 +177,7 @@ export const omopVocabularies: OMOPVocabulary[] = [
     omopVocabularyId: "ICD10PCS",
     omopVocabularyName: "ICD-10 Procedure Coding System (CMS)",
     omopVocabularyVersion: "ICD10PCS 20160518",
-    fhirCanonicalUrl: "http://hl7.org/fhir/sid/icd-10-pcs",
+    fhirCanonicalUrl: "http://www.icd10data.com/icd10pcs",
   },
   {
     omopVocabularyId: "ICD9CM",
@@ -191,7 +191,7 @@ export const omopVocabularies: OMOPVocabulary[] = [
     omopVocabularyName:
       "International Classification of Diseases, Ninth Revision, Clinical Modification, Volume 3 (NCHS)",
     omopVocabularyVersion: "ICD9CM v32 master descriptions",
-    fhirCanonicalUrl: "http://hl7.org/fhir/sid/icd-9-proc",
+    fhirCanonicalUrl: "http://hl7.org/fhir/sid/icd-9-cm",
   },
   {
     omopVocabularyId: "LOINC",
