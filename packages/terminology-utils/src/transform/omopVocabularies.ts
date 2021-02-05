@@ -151,7 +151,7 @@ export const omopVocabularies: OMOPVocabulary[] = [
     omopVocabularyId: "HCPCS",
     omopVocabularyName: "Healthcare Common Procedure Coding System (CMS)",
     omopVocabularyVersion: "2016 Alpha Numeric HCPCS File",
-    fhirCanonicalUrl: "",
+    fhirCanonicalUrl: "http://terminology.hl7.org/CodeSystem/HCPCS",
   },
   {
     omopVocabularyId: "HES Specialty",

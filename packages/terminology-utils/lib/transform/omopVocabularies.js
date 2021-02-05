@@ -144,7 +144,7 @@ exports.omopVocabularies = [
         omopVocabularyId: "HCPCS",
         omopVocabularyName: "Healthcare Common Procedure Coding System (CMS)",
         omopVocabularyVersion: "2016 Alpha Numeric HCPCS File",
-        fhirCanonicalUrl: "",
+        fhirCanonicalUrl: "http://terminology.hl7.org/CodeSystem/HCPCS",
     },
     {
         omopVocabularyId: "HES Specialty",
@@ -168,7 +168,7 @@ exports.omopVocabularies = [
         omopVocabularyId: "ICD10PCS",
         omopVocabularyName: "ICD-10 Procedure Coding System (CMS)",
         omopVocabularyVersion: "ICD10PCS 20160518",
-        fhirCanonicalUrl: "http://hl7.org/fhir/sid/icd-10-pcs",
+        fhirCanonicalUrl: "http://www.icd10data.com/icd10pcs",
     },
     {
         omopVocabularyId: "ICD9CM",
@@ -180,7 +180,7 @@ exports.omopVocabularies = [
         omopVocabularyId: "ICD9Proc",
         omopVocabularyName: "International Classification of Diseases, Ninth Revision, Clinical Modification, Volume 3 (NCHS)",
         omopVocabularyVersion: "ICD9CM v32 master descriptions",
-        fhirCanonicalUrl: "http://hl7.org/fhir/sid/icd-9-proc",
+        fhirCanonicalUrl: "http://hl7.org/fhir/sid/icd-9-cm",
     },
     {
         omopVocabularyId: "LOINC",
