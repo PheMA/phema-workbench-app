@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
-import { Navbar, Button, Alignment } from "@blueprintjs/core";
+import { Navbar, Button, Alignment, InputGroup } from "@blueprintjs/core";
 import { ConnectionSelector } from "@phema/workbench-common";
 
 const Header = (props) => {
   const { connections, execute } = props;
 
   const [selected, setSelected] = useState(undefined);
+  const [patientId, setPatientId] = useState(null);
 
   return (
     <div className="cqlWindow__header">
@@ -20,6 +21,17 @@ const Header = (props) => {
           <Button className="bp3-minimal" icon="trash" text="Delete" />
         </Navbar.Group>
         <Navbar.Group align={Alignment.RIGHT}>
+        <div className="cqlWindow__header__patientId">
+          <InputGroup
+            className="bp3-round"
+            leftIcon="person"
+            placeholder="Patient ID (optional)"
+            value={patientId}
+            onChange={(e) => {
+              setPatientId(e.target.value);
+            }}
+          />
+        </div>
           <div className="cqlWindow__header__runner">
             <ConnectionSelector
               connections={connections}
@@ -34,7 +46,7 @@ const Header = (props) => {
             intent="success"
             text="Run"
             onClick={() => {
-              execute(selected);
+              execute(selected, patientId);
             }}
           />
         </Navbar.Group>

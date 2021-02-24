@@ -55,7 +55,7 @@ const getConnection = (connections, uuid) => {
   return found;
 };
 
-const execute = (setResult, connections, library) => (connectionId) => {
+const execute = (setResult, connections, library) => (connectionId, patientId) => {
   const connectionType = getConnectionType(connections, connectionId);
   const connection = getConnection(connections, connectionId);
 
@@ -63,6 +63,10 @@ const execute = (setResult, connections, library) => (connectionId) => {
 
   if (connectionType === "fhir") {
     const params = [{ name: "code", value: library }, ...connection.parameters];
+
+    if (patientId) {
+      params.push({ name: "patientId", value: patientId });
+    }
 
     const body = buildParametersResource(params);
 
