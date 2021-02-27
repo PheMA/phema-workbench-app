@@ -39,9 +39,7 @@ const Main = (props) => {
   }, []);
 
   useEffect(() => {
-    localForage.setItem("connections", connections).then(() => {
-      console.log("Connections saved.");
-    });
+    localForage.setItem("connections", connections);
   }, [connections]);
 
   return (

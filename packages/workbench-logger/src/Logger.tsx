@@ -64,7 +64,6 @@ class Logger extends React.Component<{}, LoggerMessages> {
   }
 
   scrollToBottom = () => {
-    console.log("Scrolling");
     this.messagesEnd.scrollIntoView({ behavior: "smooth" });
   };
 
