@@ -5,7 +5,7 @@ import { emptyConfig, ConnectionManager } from "@phema/connection-manager";
 import { PhenotypeRepository } from "@phema/phenotype-repository";
 
 import Details from "../details/Details.jsx";
-import ExecutionLog from "../log/ExecutionLog";
+import Logger from "@phema/workbench-logger";
 
 const resized = () => {
   document
@@ -70,6 +70,7 @@ const Main = (props) => {
           defaultSize={"65%"}
           maxSize={-50}
           onDragFinished={resized}
+          className="logger_pane"
         >
           <Details
             saveLibrary={saveLibrary}
@@ -78,7 +79,7 @@ const Main = (props) => {
             resized={resized}
             connections={connections}
           />
-          <ExecutionLog />
+          <Logger />
         </SplitPane>
       </SplitPane>
     </div>

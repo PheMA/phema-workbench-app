@@ -1,0 +1,20 @@
+.workbench__logger {
+  font-family: monospace;
+  padding: 5px;
+
+  max-height: 100%;
+  height: 100%;
+
+  width: 100%;
+
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  &__prefix {
+    margin-left: 5px;
+  }
+
+  &__message {
+    margin-left: 5px;
+  }
+}

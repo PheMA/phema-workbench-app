@@ -6,7 +6,10 @@ import { ConnectionManager } from "./ConnectionManager";
 import { ConnectionContainer } from "./ConnectionContainer";
 import { ConnectionList } from "./ConnectionList";
 
-import { emptyConfig } from "./detaults";
+import { emptyConfig } from "./defaults";
+
+import Logger from "@phema/workbench-logger";
+const log = Logger.prefixLogger("connection-manager");
 
 import {
   ConnectionNameField,
@@ -40,4 +43,5 @@ export {
   WorkbenchCodePropertyField,
   WorkbenchStatementNameField,
   AuthFieldGroup,
+  log
 };

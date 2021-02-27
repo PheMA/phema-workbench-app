@@ -3,10 +3,17 @@
   flex: 1;
   position: relative;
   height: 100%;
+  max-height: 100%;
+
+  .logger_pane {
+    max-height: 100%;
+    flex: 1 1 auto;
+    margin-bottom: 36px;
+  }
 
   .Resizer {
     background: #000;
-    opacity: .2;
+    opacity: 0.2;
     z-index: 1;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -53,4 +60,11 @@
   .Resizer.disabled:hover {
     border-color: transparent;
   }
+}
+
+.Pane {
+  display: flex;
+  flex: 1 1 auto;
+  overflow-y: hidden;
+  max-height: 100%;
 }
