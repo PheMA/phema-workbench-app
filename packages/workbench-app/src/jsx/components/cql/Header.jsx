@@ -7,7 +7,7 @@ const Header = (props) => {
   const { connections, execute } = props;
 
   const [selected, setSelected] = useState(undefined);
-  const [patientId, setPatientId] = useState(null);
+  const [patientId, setPatientId] = useState(undefined);
 
   return (
     <div className="cqlWindow__header">

@@ -4,7 +4,9 @@ import { Dialog } from "@blueprintjs/core";
 
 import { ActionHeader } from "@phema/workbench-common";
 
-import { emptyConfig } from "./detaults";
+import { emptyConfig } from "./defaults";
+
+import { log } from "./index";
 
 import {
   FhirConnectionEditor,
@@ -27,6 +29,8 @@ function connectionSaver(
   connections: Connections,
   setConnectionsInternal: (connections: Connections) => void
 ): void {
+  log(`Saving connection ${newConnection.name || newConnection.id}`);
+
   const newConnections = Object.assign({}, connections);
 
   newConnections[type].push(newConnection);
@@ -109,6 +113,10 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
 
   useEffect(() => {
     setConnections(connectionsInternal);
+
+    log(
+      `Loaded ${connectionsInternal.i2b2.length} i2b2, ${connectionsInternal.fhir.length} fhir, ${connectionsInternal.omop.length} omop, and ${connectionsInternal.workbench.length} workbench connections`
+    );
   }, [connectionsInternal]);
 
   return (
@@ -117,6 +125,7 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({
         <ActionHeader
           title="Remote Connections"
           addAction={() => {
+            log("Adding new connection");
             setModalOpen(true);
           }}
           addText="Add"

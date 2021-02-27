@@ -18,6 +18,7 @@ import moment from "moment";
 
 import { ActionHeader } from "@phema/workbench-common";
 import { PheKB } from "@phema/phekb-api";
+import Logger from "@phema/workbench-logger";
 
 // TODO: Migrate to recoil and away from global state
 import { phenotypeListSelector } from "../../workbench-app/src/store/phenotypes/selectors";
@@ -167,6 +168,8 @@ const PhenotypeUploadQueue = (props) => {
 
 */
 
+const log = Logger.prefixLogger("repository");
+
 interface PhenotypeSummaryProps {
   uri: string;
   phekb: PheKB;
@@ -287,10 +290,14 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
   );
 
   useEffect(() => {
+    log("Fetching phenotypes");
+
     const getData = async () => {
       try {
         let list = await phekb.getPhenotypes(20);
         setPhenotypes(list);
+
+        log(`Fetched ${list.length} phenotypes`);
       } catch (err) {
         setError(err);
       }
