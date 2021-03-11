@@ -4,7 +4,7 @@ import {
   fetchPhenotypeListSuccess,
   fetchPhenotypeListFailed,
 } from "./actions";
-import PhemaWorkbenchApi from "../../api/phema-workbench";
+import { PhemaWorkbenchApi } from "@phema/workbench-common";
 
 const phemaWorkbenchApi = new PhemaWorkbenchApi();
 

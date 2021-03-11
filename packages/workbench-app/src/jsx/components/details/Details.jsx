@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Icon, Menu, MenuItem } from "@blueprintjs/core";
 
+import { PhenotypeManager } from "@phema/phenotype-manager";
+
 // See https://github.com/palantir/blueprint/issues/3891
 import { ContextMenuTarget } from "@blueprintjs/core/lib/esnext/components/context-menu/contextMenuTarget.js";
 
 import Welcome from "./Welcome";
-import { CqlWindow } from "../cql";
+import { CqlWindow } from "@phema/workbench-common";
 import { TerminologyManagerWindow } from "../terminology";
 
 const ContextMenuCqlHeader = ContextMenuTarget(
@@ -62,16 +64,36 @@ const renderTerminologyManagerTab = (tab, connections) => (
   />
 );
 
-const renderTabs = (tabs, resized, connections, saveLibrary) => {
+const PhenotypeManagerTabHeader = () => (
+  <div className="details__phenotypeTabHeader">
+    <span className="phenotype__logo" /> Phenotype
+  </div>
+);
+
+
+const renderPhenotypeTab = (tab, connections, savePhenotype) => {
+  return <Tab
+    key={tab.id}
+    id={tab.id}
+    title={<PhenotypeManagerTabHeader />}
+    panel={<PhenotypeManager connections={connections} savePhenotype={savePhenotype} />}
+  />
+};
+
+const renderTabs = (tabs, resized, connections, saveLibrary, savePhenotype) => {
   return tabs.map((tab) => {
-    return tab.library !== undefined
-      ? renderCqlTab(tab, resized, connections, saveLibrary)
-      : renderTerminologyManagerTab(tab, connections);
+    if (tab.library !== undefined) {
+      return renderCqlTab(tab, resized, connections, saveLibrary);
+    } else if (tab.type === "phenotype") {
+      return renderPhenotypeTab(tab, connections, savePhenotype);
+    } else {
+      return renderTerminologyManagerTab(tab, connections);
+    }
   });
 };
 
 const Details = (props) => {
-  const { tabs, selectedTab, resized, connections, saveLibrary } = props;
+  const { tabs, selectedTab, resized, connections, saveLibrary, savePhenotype } = props;
 
   const [selectedTabId, setSelectedTabId] = useState("welcome");
 
@@ -94,7 +116,7 @@ const Details = (props) => {
         large
       >
         <Tab key="welcome" id="welcome" title={title} panel={<Welcome />} />
-        {renderTabs(tabs, resized, connections, saveLibrary)}
+        {renderTabs(tabs, resized, connections, saveLibrary, savePhenotype)}
       </Tabs>
     </div>
   );

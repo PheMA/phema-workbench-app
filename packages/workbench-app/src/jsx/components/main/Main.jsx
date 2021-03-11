@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SplitPane from "react-split-pane";
+import _ from "lodash";
 
 import { emptyConfig, ConnectionManager } from "@phema/connection-manager";
 import { PhenotypeRepository } from "@phema/phenotype-repository";
@@ -13,11 +14,18 @@ const resized = () => {
     .dispatchEvent(new Event("phema-workbench-resized"));
 };
 
+const windowResized = () => {
+  resized();
+}
+
+window.onresize = _.debounce(windowResized, 1000);
+
 const Main = (props) => {
   const {
     localForage,
     cqlScripts,
     terminologyManagers,
+    phenotypeManagers,
     selectedTab,
     saveLibrary,
   } = props;
@@ -72,7 +80,7 @@ const Main = (props) => {
         >
           <Details
             saveLibrary={saveLibrary}
-            tabs={[...cqlScripts, ...terminologyManagers]}
+            tabs={[...cqlScripts, ...terminologyManagers, ...phenotypeManagers]}
             selectedTab={selectedTab}
             resized={resized}
             connections={connections}

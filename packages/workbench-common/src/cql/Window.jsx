@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SplitPane from "react-split-pane";
 
-import PhemaWorkbenchApi from "../../../api/phema-workbench";
+import PhemaWorkbenchApi from "../workbench-api/phema-workbench";
 import { CqlEditor } from "@phema/cql-editor";
 import { Header, CqlResult } from ".";
 

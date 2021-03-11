@@ -1,4 +1,18 @@
 import { R4 } from "@ahryman40k/ts-fhir-types";
+import _ from "lodash";
+
+const extractResource = (
+  bundle: R4.IBundle,
+  resourceId: string
+): R4.IDomainResource => {
+  let resource: R4.IDomainResource;
+
+  resource = _.cloneDeep(bundle.entry.find(r => {
+    return r.resource?.id === resourceId;
+  }));
+
+  return resource.resource;
+}
 
 const extractResources = (
   bundle: R4.IBundle,
@@ -54,7 +68,7 @@ const removeResourceFromBundle = ({
   bundle,
   index,
 }: RemoveResourceFromBundleParameters): R4.IBundle => {
-  const newBundle: R4.IBundle = Object.assign({}, bundle);
+  const newBundle: R4.IBundle = _.cloneDeep(bundle);
 
   if (!newBundle.entry) {
     return newBundle;
@@ -92,6 +106,7 @@ const collectErrorMessages = ({
 };
 
 export {
+  extractResource,
   extractResources,
   addResourceToBundle,
   removeResourceFromBundle,

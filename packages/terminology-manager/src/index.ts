@@ -11,8 +11,6 @@ import { SearchPane, SearchPaneProps } from "./panes/search/SearchPane";
 
 import { UploadPane, UploadPaneProps } from "./panes/upload/UploadPane";
 
-import { ListPane } from "./layout/ListPane";
-
 export {
   TerminologyManager,
   TerminologyManagerProps,
@@ -24,6 +22,5 @@ export {
   SearchPane,
   SearchPaneProps,
   UploadPane,
-  UploadPaneProps,
-  ListPane,
+  UploadPaneProps
 };

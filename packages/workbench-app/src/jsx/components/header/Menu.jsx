@@ -3,7 +3,7 @@ import * as React from "react";
 import { Menu, MenuDivider, MenuItem } from "@blueprintjs/core";
 
 const PhemaMenu = (props) => {
-  const { addCqlScript, addTerminologyManager } = props;
+  const { addCqlScript, addTerminologyManager, addPhenotypeManager } = props;
 
   return (
     <Menu>
@@ -13,7 +13,9 @@ const PhemaMenu = (props) => {
         text="New Terminology Manager"
         onClick={addTerminologyManager}
       />
-      <MenuItem icon="draw" text="Author Phenotype" disabled={true} />
+      <MenuItem icon="draw" text="New Phenotype" onClick={() => {
+        addPhenotypeManager()
+      }} />
       <MenuItem icon="cog" text="Settings" disabled={true} />
       <MenuDivider />
       <MenuItem

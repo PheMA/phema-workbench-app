@@ -74,12 +74,14 @@ class PhemaWorkbenchApi {
       method: "POST",
       body: JSON.stringify(body),
       headers,
+      credentials: "include",
     });
   }
 
   async get(url, headers) {
     return fetch(url, {
       headers,
+      credentials: "include",
     });
   }
 }

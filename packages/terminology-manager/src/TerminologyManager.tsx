@@ -11,10 +11,11 @@ import {
 import {
   Toolbar,
   ConnectionSelector as CommonConnectionSelector,
+  ListPane,
 } from "@phema/workbench-common";
 
 import { R4 } from "@ahryman40k/ts-fhir-types";
-import { ListPane, ActionPane } from "./index";
+import { ActionPane } from "./index";
 
 import "./TerminologyManager.scss";
 import { ActionType } from "./layout/ActionPane";
@@ -291,10 +292,13 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
         rightChildren={rightChildren}
       />
       <div className="terminologyManager__window">
-        <ListPane
-          bundle={bundle}
-          removeResourceFromBundle={removeResourceFromBundle}
-        />
+        <div className="terminologyManager__window__list">
+          <ListPane
+            bundle={bundle}
+            removeResourceFromBundle={removeResourceFromBundle}
+            toaster={TerminologyToaster}
+          />
+        </div>
         <ActionPane
           action={currentAction}
           fhirConnection={findFhirConnection(selectedSource)}

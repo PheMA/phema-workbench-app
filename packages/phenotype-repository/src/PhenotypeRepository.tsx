@@ -175,43 +175,11 @@ interface PhenotypeSummaryProps {
   phekb: PheKB;
 }
 
-const PhenotypeSummary: React.RC<PhenotypeSummaryProps> = ({ uri, phekb }) => {
-  let [summary, setSummary] = useState(undefined);
-
-  useEffect(() => {
-    const getData = async () => {
-      let phenotype = await phekb.getPhenotype(uri);
-
-      setSummary(phenotype);
-    };
-
-    getData();
-
-    return;
-  }, []);
-
-  if (!summary) {
-    return null; // TODO: add loading indicator
-  }
-
-  let markup;
-  if (
-    summary.includes &&
-    summary.includes("Access denied for user anonymous")
-  ) {
-    markup = "Access denied for user anonymous";
-  } else {
-    markup = summary?.body?.und && summary?.body?.und[0]?.safe_value;
-  }
-
-  if (!markup) {
-    markup = "No summary to display";
-  }
-
+const PhenotypeSummary: React.RC<PhenotypeSummaryProps> = ({ phenotype }) => {
   return (
     <div
       className="phenotype__summary"
-      dangerouslySetInnerHTML={{ __html: markup }}
+      dangerouslySetInnerHTML={{ __html: phenotype.body.und[0].safe_value }}
     />
   );
 };
@@ -240,7 +208,7 @@ const PhenotypeItem = ({ item, index, phekb }) => {
         <AnchorButton
           icon="globe-network"
           minimal
-          href={item.uri.replace("/api", "")}
+          href={item.path}
           target="_blank"
         />
         <Dialog
@@ -251,7 +219,7 @@ const PhenotypeItem = ({ item, index, phekb }) => {
             setModalOpen(false);
           }}
         >
-          <PhenotypeSummary uri={item.uri} phekb={phekb} />
+          <PhenotypeSummary phenotype={item} />
         </Dialog>
       </div>
     </div>
@@ -277,6 +245,28 @@ const PhenotypeList = ({ phenotypes, filter, phekb }) => {
   );
 };
 
+const findExecutablePhenotypes = async (list, phekb) => {
+  log("Filtering executable phenotypes");
+
+  const executables = list.map((p) =>
+    phekb.getPhenotype(p.uri).then((phenotype) => {
+      if (phenotype.nid) {
+        if (phenotype.field_phema_phenotype.und) {
+          return Promise.resolve(phenotype);
+        } else {
+          return Promise.resolve(null);
+        }
+      } else {
+        return Promise.resolve(null);
+      }
+    })
+  );
+
+  let ex = await Promise.all(executables);
+
+  return ex.filter((e) => e != null);
+};
+
 const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
   phekbUrl,
 }) => {
@@ -294,10 +284,11 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
 
     const getData = async () => {
       try {
-        let list = await phekb.getPhenotypes(20);
-        setPhenotypes(list);
-
-        log(`Fetched ${list.length} phenotypes`);
+        // let list = await phekb.getPhenotypes(20);
+        // log(`Fetched ${list.length} phenotypes`);
+        // const filtered = await findExecutablePhenotypes(list, phekb);
+        // log(`Found ${filtered.length} executable phenotypes`);
+        // setPhenotypes(filtered);
       } catch (err) {
         setError(err);
       }
@@ -317,7 +308,7 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
       />
     );
   } else if (!phenotypes) {
-    return <Spinner className="phenotypes_loading" />;
+    return <div></div>; //<Spinner className="phenotypes_loading" />;
   } else {
     return (
       <div className="phenotypes">

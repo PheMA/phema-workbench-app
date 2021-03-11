@@ -1,26 +1,3 @@
-.terminologyManager__listPane__node {
-  height: 50px;
-
-  &__title {
-    margin-top: 18px;
-  }
-
-  &__subtitle {
-    font-size: x-small;
-    color: gray;
-  }
-
-  &__actions {
-    display: flex;
-  }
-}
-
-.terminologyManager__window__listPane__tree {
-  .bp3-tree-node {
-    // margin-bottom: 5px;
-  }
-}
-
 .terminologyManager__warningToast {
   max-width: 1024px;
 }

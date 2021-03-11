@@ -13,4 +13,13 @@
   .bp3-tab {
     margin-left: 20px;
   }
+
+  .phenotype__logo {
+    width: 24px;
+    height: 20px;
+    background: map-get($images, phemaIcon);
+    background-repeat: no-repeat;
+    margin: 12px 5px 0px;
+    float: left;
+  }
 }

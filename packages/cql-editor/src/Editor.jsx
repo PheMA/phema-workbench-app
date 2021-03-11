@@ -34,6 +34,10 @@ class CqlEditor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (prevProps.scriptId !== this.props.scriptId) {
+      this.editor.setValue(this.props.library);
+    }
+
     this.editor.layout();
   }
 

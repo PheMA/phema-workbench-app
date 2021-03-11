@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 
 import { Header, Main, Footer } from "../../components";
 
+import Logger from "@phema/workbench-logger";
+import { emptyPhenotype } from "@phema/phenotype-utils";
+
+const log = Logger.prefixLogger("workbench-app");
+
 const addCqlScript = (localForage, setCqlScripts, setSelectedTab) => () => {
+  log("Adding new CQL script");
+
   localForage.getItem("cqlScripts").then((cqlScripts) => {
     if (cqlScripts === null) {
       cqlScripts = [];
@@ -45,6 +52,8 @@ const addTerminologyManager = (
   setTerminologyManagers,
   setSelectedTab
 ) => () => {
+  log("Adding new Terminology Manager");
+
   localForage.getItem("terminologyManagers").then((terminologyManagers) => {
     if (terminologyManagers == null) {
       terminologyManagers = [];
@@ -62,11 +71,42 @@ const addTerminologyManager = (
   });
 };
 
+const addPhenotypeManager = (
+  localForage,
+  setPhenotypeManagers,
+  setSelectedTab
+) => (phenotypeBundle) => {
+  if (phenotypeBundle && phenotypeBundle.resourceType === "Bundle") {
+    const title = phenotypeBundle.entry.find(e => e.resourceType === "Composition").title;
+
+    log(`Importing ${title}`);
+  } else {
+    log("Adding new Phenotype");
+  }
+
+  localForage.getItem("phenotypeManagers").then((phenotypeManagers) => {
+    if (phenotypeManagers == null) {
+      phenotypeManagers = [];
+    }
+
+    const tabId = uuid();
+
+    setSelectedTab(tabId);
+
+    phenotypeManagers.push({ id: tabId, bundle: phenotypeBundle ? phenotypeBundle : emptyPhenotype(), type: "phenotype" });
+
+    localForage.setItem("phenotypeManagers", phenotypeManagers).then(() => {
+      setPhenotypeManagers(phenotypeManagers);
+    })
+  })
+}
+
 const App = (props) => {
   const { localForage } = props;
 
   const [cqlScripts, setCqlScripts] = useState([]);
   const [terminologyManagers, setTerminologyManagers] = useState([]);
+  const [phenotypeManagers, setPhenotypeManagers] = useState([]);
 
   useEffect(() => {
     localForage.getItem("cqlScripts").then((cqlScripts) => {
@@ -77,6 +117,12 @@ const App = (props) => {
   useEffect(() => {
     localForage.getItem("terminologyManagers").then((terminologyManagers) => {
       setTerminologyManagers(terminologyManagers ? terminologyManagers : []);
+    });
+  }, []);
+
+  useEffect(() => {
+    localForage.getItem("phenotypeManagers").then((phenotypeManagers) => {
+      setPhenotypeManagers(phenotypeManagers ? phenotypeManagers : []);
     });
   }, []);
 
@@ -92,12 +138,18 @@ const App = (props) => {
           setTerminologyManagers,
           setSelectedTab
         )}
+        addPhenotypeManager={addPhenotypeManager(
+          localForage,
+          setPhenotypeManagers,
+          setSelectedTab
+        )}
       />
       <Main
         saveLibrary={saveLibrary(localForage, setCqlScripts)}
         localForage={localForage}
         cqlScripts={cqlScripts}
         terminologyManagers={terminologyManagers}
+        phenotypeManagers={phenotypeManagers}
         selectedTab={selectedTab}
       />
       <Footer />

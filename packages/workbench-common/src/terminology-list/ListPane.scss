@@ -1,0 +1,41 @@
+.listPane {
+  width: 100%;
+  height: 100%;
+
+  overflow: scroll;
+
+  &__title {
+    font-family: "Syncopate";
+  }
+
+  &__tree {
+    margin-bottom: 10px;
+
+    .bp3-tree-node-content {
+      height: 40px;
+    }
+  }
+
+  &__node {
+    height: 50px;
+
+    &__title {
+      margin-top: 18px;
+    }
+
+    &__subtitle {
+      font-size: x-small;
+      color: gray;
+    }
+
+    &__actions {
+      display: flex;
+    }
+  }
+
+  & .bp3-tree-node-selected {
+    & .listPane__node__subtitle {
+      color: #dddddd;
+    }
+  }
+}

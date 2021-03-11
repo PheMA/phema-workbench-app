@@ -4,7 +4,7 @@ import { Button, Popover } from "@blueprintjs/core";
 import Menu from "./Menu";
 
 const PhemaWorkbenchHeader = (props) => {
-  const { addCqlScript, addTerminologyManager } = props;
+  const { addCqlScript, addTerminologyManager, addPhenotypeManager } = props;
 
   return (
     <div className="header">
@@ -16,6 +16,7 @@ const PhemaWorkbenchHeader = (props) => {
             <Menu
               addCqlScript={addCqlScript}
               addTerminologyManager={addTerminologyManager}
+              addPhenotypeManager={addPhenotypeManager}
             />
           }
         >
