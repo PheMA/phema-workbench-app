@@ -9,9 +9,9 @@ const extractResource = (
 
   resource = _.cloneDeep(bundle.entry.find(r => {
     return r.resource?.id === resourceId;
-  }));
+  }).resource);
 
-  return resource.resource;
+  return resource;
 }
 
 const extractResources = (
