@@ -8,13 +8,41 @@
     &__terminologies {
       padding: 5px;
     }
+
+    &.dragActive {
+      background-color: #d1eafa;
+    }
+
+    &__libraries {
+      height: calc(50% - 40px);
+      overflow: hidden;
+    }
+
+    &__terminologies {
+      height: calc(50% - 40px);
+      overflow: hidden;
+    }
   }
 
   &__right {
     width: 100%;
+
+    overflow-y: scroll;
   }
 
   & .SplitPane {
     margin-bottom: 40px;
+
+    & .Pane {
+      height: calc(100% - 40px);
+    }
+  }
+
+  &__valueSet {
+    width: 100%;
+
+    & .bp3-html-table {
+      width: 100%;
+    }
   }
 }

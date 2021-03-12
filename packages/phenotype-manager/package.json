@@ -10,6 +10,7 @@
     "@phema/workbench-logger": "^1.0.0",
     "@phema/fhir-utils": "^1.0.0",
     "react": "^16.13.1",
+    "react-dropzone": "^v10.1.4",
     "react-split-pane": "^0.1.84",
     "recoil": "^0.1.3"
   },

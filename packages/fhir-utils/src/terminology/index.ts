@@ -187,9 +187,36 @@ function bundleContainsCodeSystem({
   });
 }
 
+interface ValueSetItem {
+  code: string;
+  display?: string;
+  system?: string;
+  version?: string;
+}
+
+function valueSetToCodeArray(
+  valueSet: R4.IValueSet
+): ValueSetItem[] {
+  const codes = [];
+
+  valueSet?.compose?.include.forEach(include => {
+    include?.concept?.forEach(concept => {
+      codes.push({
+        code: concept.code,
+        display: concept.display,
+        system: include.system,
+        version: include.version
+      })
+    });
+  });
+
+  return codes;
+}
+
 export {
   expand,
   extractValueSetDependencies,
   bundleContainsValueSet,
   bundleContainsCodeSystem,
+  valueSetToCodeArray
 };

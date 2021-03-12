@@ -2,12 +2,11 @@ import React, { useEffect } from "react";
 import SplitPane from "react-split-pane";
 import Logger from "@phema/workbench-logger";
 
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
+import { bundleAtom } from "../state/atoms";
 
 import Left from "../layout/Left";
 import Right from "../layout/Right";
-
-import { bundleAtom } from "../state/atoms";
 
 const log = Logger.prefixLogger("phenotype-manager");
 
@@ -18,15 +17,20 @@ const resized = () => {
 };
 
 const Main = ({ inputBundle, connections, repoUrl }) => {
-  const [bundle, setBundle] = useRecoilState(bundleAtom);
+  console.debug("MAIN RENDER");
 
-  useEffect(() => log("Phenotype Manager initialized"), []);
+  const setBundle = useSetRecoilState(bundleAtom);
+
+  useEffect(() => {
+    setBundle(inputBundle);
+    log("Phenotype Manager initialized");
+  }, []);
 
   return (
     <div className="phenotypeManager">
       <SplitPane
         split="vertical"
-        defaultSize={"15%"}
+        defaultSize={"20%"}
         maxSize={-50}
         className="primary"
         onDragFinished={resized}

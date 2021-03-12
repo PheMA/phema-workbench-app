@@ -4,6 +4,8 @@ import { R4 } from "@ahryman40k/ts-fhir-types";
 
 import { HTMLTable, Button, Dialog } from "@blueprintjs/core";
 
+import { ValueSet } from "@phema/workbench-common";
+
 import { TerminologyUtils, FHIRUtils } from "@phema/fhir-utils";
 
 interface SearchResultsProps {
@@ -24,30 +26,7 @@ const ValueSetExpansion: React.RC<valueSetToExpansionProps> = ({
     return null;
   }
 
-  const rows = valueSet.expansion.contains.map((code) => {
-    return (
-      <tr key={code.code}>
-        <td>{code.code}</td>
-        <td>{code.display}</td>
-        <td>{code.version}</td>
-        <td>{code.system}</td>
-      </tr>
-    );
-  });
-
-  return (
-    <HTMLTable>
-      <thead>
-        <tr>
-          <th>Code</th>
-          <th>Display</th>
-          <th>Version</th>
-          <th>System</th>
-        </tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </HTMLTable>
-  );
+  return <ValueSet codes={valueSet.expansion.contains} />;
 };
 
 const SearchResults: React.FC<SearchResultsProps> = ({

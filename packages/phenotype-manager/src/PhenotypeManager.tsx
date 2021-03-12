@@ -1,14 +1,21 @@
 import React from "react";
-import { RecoilRoot, atom } from "recoil";
+import { RecoilRoot } from "recoil";
 
 import Main from "./layout/Main";
 
+import { useRecoilState } from "recoil";
+import { bundleAtom } from "./state/atoms";
+
 import "./PhenotypeManager.scss";
 
+import data from "./state/data";
+
 const PhenotypeManager = ({ bundle, connections, repoUrl }) => {
+  console.debug("MANAGER RENDER");
+
   return (
     <RecoilRoot>
-      <Main inputBundle={bundle} connections={connections} repoUrl={repoUrl} />
+      <Main inputBundle={data} connections={connections} repoUrl={repoUrl} />
     </RecoilRoot>
   );
 };

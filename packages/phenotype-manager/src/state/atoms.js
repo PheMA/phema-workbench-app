@@ -1,10 +1,11 @@
 import { atom } from "recoil";
 
-import data from "../state/data";
-
 const bundleAtom = atom({
   key: "phenotypeManagerBundle",
-  default: data,
+  default: {
+    resourceType: "Bundle",
+    entry: [],
+  },
 });
 
 const selectedAtom = atom({

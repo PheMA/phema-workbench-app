@@ -59,6 +59,7 @@ class CqlEditor extends React.Component {
       {
         value: content,
         language: "cql",
+        automaticLayout: true
       }
     );
 

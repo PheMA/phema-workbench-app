@@ -9,7 +9,7 @@ const extractResource = (
 
   resource = _.cloneDeep(bundle.entry.find(r => {
     return r.resource?.id === resourceId;
-  }).resource);
+  })?.resource);
 
   return resource;
 }
@@ -42,7 +42,7 @@ const addResourceToBundle = ({
   method,
   url,
 }: AddResourceToBundleParameters): R4.IBundle => {
-  const newBundle: R4.IBundle = Object.assign({}, bundle);
+  const newBundle: R4.IBundle = _.cloneDeep(bundle);
 
   if (!newBundle.entry) {
     newBundle.entry = [];
@@ -58,6 +58,8 @@ const addResourceToBundle = ({
 
   return newBundle;
 };
+
+
 
 interface RemoveResourceFromBundleParameters {
   bundle: R4.IBundle;
@@ -105,10 +107,28 @@ const collectErrorMessages = ({
   return messages;
 };
 
+interface BundleContainsResourceWithIdParameters {
+  bundle: R4.IBundle,
+  id: string
+}
+
+const bundleContainsResourceWithId = ({
+  bundle, id
+}: BundleContainsResourceWithIdParameters): boolean => {
+  if (!id) {
+    return false;
+  }
+
+  return bundle?.entry?.some(entry => {
+    return entry.resource?.id === id;
+  });
+}
+
 export {
   extractResource,
   extractResources,
   addResourceToBundle,
   removeResourceFromBundle,
   collectErrorMessages,
+  bundleContainsResourceWithId
 };

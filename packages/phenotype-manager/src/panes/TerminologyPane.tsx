@@ -1,6 +1,6 @@
 import React from "react";
 
-const TerminologyPane = () => {
+const TerminologyPane = ({ resource }) => {
   return <div className="phenotypeManager__terminologyPane">terminology</div>;
 };
 

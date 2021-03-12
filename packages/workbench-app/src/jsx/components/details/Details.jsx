@@ -44,13 +44,15 @@ const renderCqlTab = (tab, resized, connections, saveLibrary) => (
     id={tab.id}
     title={<ContextMenuCqlHeader />}
     panel={
-      <CqlWindow
-        scriptId={tab.id}
-        resized={resized}
-        library={tab.library}
-        connections={connections}
-        saveLibrary={saveLibrary}
-      />
+      <div className="details__cqlContainer">
+        <CqlWindow
+          scriptId={tab.id}
+          resized={resized}
+          library={tab.library}
+          connections={connections}
+          saveLibrary={saveLibrary}
+        />
+      </div>
     }
   />
 );
@@ -93,13 +95,7 @@ const renderTabs = (tabs, resized, connections, saveLibrary, savePhenotype) => {
 };
 
 const Details = (props) => {
-  const { tabs, selectedTab, resized, connections, saveLibrary, savePhenotype } = props;
-
-  const [selectedTabId, setSelectedTabId] = useState("welcome");
-
-  useEffect(() => {
-    setSelectedTabId(selectedTab);
-  }, [selectedTab]);
+  const { tabs, resized, connections, saveLibrary, savePhenotype } = props;
 
   const title = (
     <div className="details__welcome">
@@ -107,12 +103,12 @@ const Details = (props) => {
     </div>
   );
 
+  console.debug("DETAILS RENDER");
+
   return (
     <div className="detailsContainer">
       <Tabs
         id="details"
-        selectedTabId={selectedTabId}
-        onChange={setSelectedTabId}
         large
       >
         <Tab key="welcome" id="welcome" title={title} panel={<Welcome />} />

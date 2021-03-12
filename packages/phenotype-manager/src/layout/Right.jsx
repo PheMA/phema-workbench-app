@@ -2,8 +2,8 @@ import React from 'react';
 import { useRecoilState } from "recoil";
 import _ from "lodash";
 
-import { BundleUtils, LibraryUtils } from "@phema/fhir-utils";
-import { CqlWindow } from "@phema/workbench-common";
+import { BundleUtils, LibraryUtils, TerminologyUtils } from "@phema/fhir-utils";
+import { CqlWindow, ValueSet } from "@phema/workbench-common";
 
 import LibraryPane from '../panes/LibraryPane';
 
@@ -40,8 +40,13 @@ const Right = ({ log, connections, repoUrl }) => {
             saveLibrary={_.debounce(saveLibrary(log), 2000)}
             library={library}
         />
+    } else if (resource?.resourceType === "ValueSet") {
+        const codes = TerminologyUtils.valueSetToCodeArray(resource);
+
+        content = <div className="phenotypeManager__valueSet"><ValueSet codes={codes} /></div>
+
     } else {
-        content = <div>value set</div>
+        content = null;
     }
 
     return (
