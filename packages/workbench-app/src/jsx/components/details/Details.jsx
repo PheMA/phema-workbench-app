@@ -103,8 +103,6 @@ const Details = (props) => {
     </div>
   );
 
-  console.debug("DETAILS RENDER");
-
   return (
     <div className="detailsContainer">
       <Tabs

@@ -30,8 +30,6 @@ const onNodeClick = (log, setSelected) => (node, nodePath, evt) => {
 const processFiles = async (log, bundle, setBundle, files) => {
     let newBundle = _.cloneDeep(bundle);
 
-    console.debug("1 >> ", newBundle.entry.length);
-
     const processResource = (log, resource) => {
         // TODO: handle errors
 
@@ -97,8 +95,6 @@ const processFiles = async (log, bundle, setBundle, files) => {
         }
     }
 
-    console.debug("2 >> ", newBundle.entry.length);
-
     setBundle(newBundle);
 }
 
@@ -110,8 +106,6 @@ const Left = ({ log }) => {
         processFiles(log, bundle, setBundle, acceptedFiles);
     }, [bundle])
     const { getRootProps, getInputProps, open, isDragActive } = useDropzone({ onDrop, noClick: true, accept: ".json, .cql" })
-
-    console.log("B", bundle);
 
     return (
         <div className={`phenotypeManager__left ${isDragActive ? "dragActive" : ""}`} {...getRootProps()}>

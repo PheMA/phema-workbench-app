@@ -11,8 +11,6 @@ import "./PhenotypeManager.scss";
 import data from "./state/data";
 
 const PhenotypeManager = ({ bundle, connections, repoUrl }) => {
-  console.debug("MANAGER RENDER");
-
   return (
     <RecoilRoot>
       <Main inputBundle={data} connections={connections} repoUrl={repoUrl} />

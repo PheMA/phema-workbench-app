@@ -17,8 +17,6 @@ const resized = () => {
 };
 
 const Main = ({ inputBundle, connections, repoUrl }) => {
-  console.debug("MAIN RENDER");
-
   const setBundle = useSetRecoilState(bundleAtom);
 
   useEffect(() => {

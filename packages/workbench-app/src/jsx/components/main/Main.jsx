@@ -50,8 +50,6 @@ const Main = (props) => {
     localForage.setItem("connections", connections);
   }, [connections]);
 
-  console.debug("OUTER MAIN RENDER");
-
   return (
     <div id="phemaWorkbenchMain" className="main">
       <SplitPane
