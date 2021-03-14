@@ -27,7 +27,9 @@ const Main = (props) => {
     terminologyManagers,
     phenotypeManagers,
     selectedTab,
+    setSelectedTab,
     saveLibrary,
+    addPhenotypeManager
   } = props;
 
   const [connections, setConnections] = useState(undefined);
@@ -65,7 +67,7 @@ const Main = (props) => {
           maxSize={-50}
           onDragFinished={resized}
         >
-          <PhenotypeRepository localForage={localForage} />
+          <PhenotypeRepository importFunc={addPhenotypeManager} />
           <ConnectionManager
             connections={connections}
             setConnections={setConnections}
@@ -82,6 +84,7 @@ const Main = (props) => {
             saveLibrary={saveLibrary}
             tabs={[...cqlScripts, ...terminologyManagers, ...phenotypeManagers]}
             selectedTab={selectedTab}
+            setSelectedTab={setSelectedTab}
             resized={resized}
             connections={connections}
           />

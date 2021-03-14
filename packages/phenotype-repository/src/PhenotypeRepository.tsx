@@ -11,6 +11,7 @@ import {
   Spinner,
   NonIdealState,
   Tree,
+  Tooltip,
 } from "@blueprintjs/core";
 import Dropzone from "react-dropzone";
 import numeral from "numeral";
@@ -105,12 +106,15 @@ const handleNodeClick = (
     updated[clickedIndex].isExpanded = !phenotypes[clickedIndex].isExpanded;
 
     setPhenotypes(updated);
-  } else {
-    console.log("Importing...");
   }
 };
 
-const phenotypesToTreeNodes = (phenotypes, setPhenotypes, phekb) => {
+const phenotypesToTreeNodes = (
+  phenotypes,
+  setPhenotypes,
+  phekb,
+  importFunc
+) => {
   const nodes = phenotypes.map((p) => {
     let children;
 
@@ -122,6 +126,19 @@ const phenotypesToTreeNodes = (phenotypes, setPhenotypes, phekb) => {
           icon: "people",
           label: file.filename,
           nodeData: file,
+          secondaryLabel: (
+            <div className="phemaWorkbench__import">
+              <Tooltip content="Import">
+                <Button
+                  minimal
+                  icon="import"
+                  onClick={async () => {
+                    phekb.getFile(file.uri).then(importFunc);
+                  }}
+                />
+              </Tooltip>
+            </div>
+          ),
         };
       });
     } else {
@@ -151,12 +168,23 @@ const phenotypesToTreeNodes = (phenotypes, setPhenotypes, phekb) => {
   return nodes;
 };
 
-const PhenotypeList = ({ phenotypes, filter, setPhenotypes, phekb }) => {
+const PhenotypeList = ({
+  phenotypes,
+  filter,
+  setPhenotypes,
+  phekb,
+  importFunc,
+}) => {
   const filtered = phenotypes.filter((p) =>
     p.summary.title.toUpperCase().includes(filter.toUpperCase())
   );
 
-  const nodes = phenotypesToTreeNodes(filtered, setPhenotypes, phekb);
+  const nodes = phenotypesToTreeNodes(
+    filtered,
+    setPhenotypes,
+    phekb,
+    importFunc
+  );
 
   return (
     <div className="phenotypes__list">
@@ -197,30 +225,14 @@ const PhenotypeList = ({ phenotypes, filter, setPhenotypes, phekb }) => {
   );
 };
 
-const findExecutablePhenotypes = async (list, phekb) => {
-  log("Filtering executable phenotypes");
-
-  const executables = list.map((p) =>
-    phekb.getPhenotype(p.uri).then((phenotype) => {
-      if (phenotype.nid) {
-        if (phenotype.field_phema_phenotype.und) {
-          return Promise.resolve(phenotype);
-        } else {
-          return Promise.resolve(null);
-        }
-      } else {
-        return Promise.resolve(null);
-      }
-    })
-  );
-
-  let ex = await Promise.all(executables);
-
-  return ex.filter((e) => e != null);
-};
+interface PhenotypeRepositoryProps {
+  phekbUrl?: string;
+  importFunc: (phenotype: object) => void;
+}
 
 const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
   phekbUrl,
+  importFunc,
 }) => {
   let [phenotypes, setPhenotypes] = useState(undefined);
   let [error, setError] = useState(undefined);
@@ -228,7 +240,8 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
 
   // TODO: Move this to config
   const phekb = new PheKB(
-    "https://cors.phema.science:4321/http://dev-phekb.pantheonsite.io/api"
+    phekbUrl ||
+      "https://cors.phema.science:4321/http://dev-phekb.pantheonsite.io/api"
   );
 
   useEffect(() => {
@@ -254,8 +267,6 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
     };
 
     const getDetails = async (list) => {
-      console.log("getting deets", list);
-
       // Get details where possible
       const promises = list.map((phenotype) => {
         return phekb
@@ -312,6 +323,7 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
           filter={filter}
           setPhenotypes={setPhenotypes}
           phekb={phekb}
+          importFunc={importFunc}
         />
       </div>
     );

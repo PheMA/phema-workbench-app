@@ -38,7 +38,7 @@ const TerminologyManagerTabHeader = () => (
   </div>
 );
 
-const renderCqlTab = (tab, resized, connections, saveLibrary) => (
+const renderCqlTab = (tab, resized, connections, saveLibrary, selectedTab, setSelectedTab) => (
   <Tab
     key={tab.id}
     id={tab.id}
@@ -57,7 +57,7 @@ const renderCqlTab = (tab, resized, connections, saveLibrary) => (
   />
 );
 
-const renderTerminologyManagerTab = (tab, connections) => (
+const renderTerminologyManagerTab = (tab, connections, selectedTab, setSelectedTab) => (
   <Tab
     key={tab.id}
     id={tab.id}
@@ -73,29 +73,29 @@ const PhenotypeManagerTabHeader = () => (
 );
 
 
-const renderPhenotypeTab = (tab, connections, savePhenotype) => {
+const renderPhenotypeTab = (tab, connections, savePhenotype, selectedTab, setSelectedTab) => {
   return <Tab
     key={tab.id}
     id={tab.id}
     title={<PhenotypeManagerTabHeader />}
-    panel={<PhenotypeManager connections={connections} savePhenotype={savePhenotype} />}
+    panel={<PhenotypeManager bundle={tab.bundle} connections={connections} savePhenotype={savePhenotype} />}
   />
 };
 
-const renderTabs = (tabs, resized, connections, saveLibrary, savePhenotype) => {
+const renderTabs = (tabs, resized, connections, saveLibrary, savePhenotype, selectedTab, setSelectedTab) => {
   return tabs.map((tab) => {
     if (tab.library !== undefined) {
-      return renderCqlTab(tab, resized, connections, saveLibrary);
+      return renderCqlTab(tab, resized, connections, saveLibrary, selectedTab, setSelectedTab);
     } else if (tab.type === "phenotype") {
-      return renderPhenotypeTab(tab, connections, savePhenotype);
+      return renderPhenotypeTab(tab, connections, savePhenotype, selectedTab, setSelectedTab);
     } else {
-      return renderTerminologyManagerTab(tab, connections);
+      return renderTerminologyManagerTab(tab, connections, selectedTab, setSelectedTab);
     }
   });
 };
 
 const Details = (props) => {
-  const { tabs, resized, connections, saveLibrary, savePhenotype } = props;
+  const { tabs, resized, connections, saveLibrary, savePhenotype, selectedTab, setSelectedTab } = props;
 
   const title = (
     <div className="details__welcome">
@@ -107,10 +107,12 @@ const Details = (props) => {
     <div className="detailsContainer">
       <Tabs
         id="details"
+        selectedTabId={selectedTab}
+        onChange={(tabId) => { setSelectedTab(tabId) }}
         large
       >
         <Tab key="welcome" id="welcome" title={title} panel={<Welcome />} />
-        {renderTabs(tabs, resized, connections, saveLibrary, savePhenotype)}
+        {renderTabs(tabs, resized, connections, saveLibrary, savePhenotype, selectedTab, setSelectedTab)}
       </Tabs>
     </div>
   );

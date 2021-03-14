@@ -10,10 +10,17 @@ import "./PhenotypeManager.scss";
 
 import data from "./state/data";
 
-const PhenotypeManager = ({ bundle, connections, repoUrl }) => {
+const PhenotypeManager = ({ bundle, connections, repoUrl, savePhenotype }) => {
+  const initialBundle = bundle ? bundle : data;
+
   return (
     <RecoilRoot>
-      <Main inputBundle={data} connections={connections} repoUrl={repoUrl} />
+      <Main
+        inputBundle={initialBundle}
+        connections={connections}
+        repoUrl={repoUrl}
+        savePhenotype={savePhenotype}
+      />
     </RecoilRoot>
   );
 };

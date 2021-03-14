@@ -77,7 +77,7 @@ const addPhenotypeManager = (
   setSelectedTab
 ) => (phenotypeBundle) => {
   if (phenotypeBundle && phenotypeBundle.resourceType === "Bundle") {
-    const title = phenotypeBundle.entry.find(e => e.resourceType === "Composition").title;
+    const title = phenotypeBundle.entry.find(e => e.resource.resourceType === "Composition").resource.title;
 
     log(`Importing ${title}`);
   } else {
@@ -91,12 +91,12 @@ const addPhenotypeManager = (
 
     const tabId = uuid();
 
-    setSelectedTab(tabId);
-
     phenotypeManagers.push({ id: tabId, bundle: phenotypeBundle ? phenotypeBundle : emptyPhenotype(), type: "phenotype" });
 
     localForage.setItem("phenotypeManagers", phenotypeManagers).then(() => {
       setPhenotypeManagers(phenotypeManagers);
+
+      setSelectedTab(tabId);
     })
   })
 }
@@ -151,6 +151,8 @@ const App = (props) => {
         terminologyManagers={terminologyManagers}
         phenotypeManagers={phenotypeManagers}
         selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+        addPhenotypeManager={addPhenotypeManager(localForage, setPhenotypeManagers, setSelectedTab)}
       />
       <Footer />
     </div>
