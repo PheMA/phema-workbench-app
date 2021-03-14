@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import {
   Toaster,
   Position,
@@ -11,6 +10,7 @@ import {
   Icon,
   Spinner,
   NonIdealState,
+  Tree,
 } from "@blueprintjs/core";
 import Dropzone from "react-dropzone";
 import numeral from "numeral";
@@ -25,148 +25,6 @@ import { phenotypeListSelector } from "../../workbench-app/src/store/phenotypes/
 import { fetchPhenotypeList } from "../../workbench-app/src/store/phenotypes/actions";
 
 import "./PhenotypeRepository.scss";
-
-/*
-
-const acceptedFiles = [".zip", ".ZIP"];
-
-const PhemaWorkbenchToaster = Toaster.create({
-  className: "toaster",
-  position: Position.TOP,
-});
-
-const DropArea = (getRootProps, getInputProps, isDragActive) => (
-  <div
-    className={`dropArea${isDragActive ? "--active" : ""}`}
-    {...getRootProps()}
-  >
-    <div className={`dropArea__text${isDragActive ? "--active" : ""}`}>
-      Drop phenotypes here or click to select
-    </div>
-    <div className={`dropArea__icon${isDragActive ? "--active" : ""}`}>
-      <Icon icon={isDragActive ? "confirm" : "add"} iconSize={45} />
-    </div>
-    <input {...getInputProps()} />
-  </div>
-);
-
-class AddPhenotype extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      queue: [],
-    };
-  }
-
-  queueFiles(files) {
-    const queue = this.state.queue.concat(files);
-    this.setState({ queue });
-  }
-
-  async handleUpload() {
-    const files = this.state.queue;
-
-    const transformFiles = (files) =>
-      files.map((file) => {
-        return {
-          modified: file.lastModified,
-          name: file.name,
-          size: file.size,
-        };
-      });
-
-    let phenotypes = await this.props.localForage.getItem("phenotypes");
-
-    if (phenotypes == null) {
-      phenotypes = transformFiles(files);
-    } else {
-      phenotypes = phenotypes.concat(transformFiles(files));
-    }
-
-    this.props.localForage.setItem("phenotypes", phenotypes);
-
-    // clear the queue
-    this.setState({
-      queue: [],
-    });
-
-    // close the dialog
-    this.props.onCancel();
-
-    // reload from localStorage
-    this.props.reloadStorage();
-  }
-
-  onDrop(acceptedFiles, rejectedFiles) {
-    this.queueFiles(acceptedFiles);
-
-    if (rejectedFiles.length) {
-      PhemaWorkbenchToaster.show({
-        icon: "warning-sign",
-        intent: "warning",
-        message: "Only phenotype ZIP files are allowed.",
-      });
-    }
-  }
-
-  render() {
-    const { onCancel } = this.props;
-
-    return (
-      <div className="addPhenotype">
-        <Dropzone onDrop={this.onDrop.bind(this)} accept={acceptedFiles}>
-          {({ getRootProps, getInputProps, isDragActive }) => {
-            return DropArea(getRootProps, getInputProps, isDragActive);
-          }}
-        </Dropzone>
-        <PhenotypeUploadQueue queue={this.state.queue} />
-        <div className="addPhenotype__actions">
-          <Button onClick={onCancel}>Cancel</Button>
-          <Button
-            intent="primary"
-            icon="upload"
-            onClick={this.handleUpload.bind(this)}
-          >
-            Upload
-          </Button>
-        </div>
-      </div>
-    );
-  }
-}
-
-const PhenotypeUploadQueue = (props) => {
-  if (props.queue.length === 0) {
-    return null;
-  }
-
-  const items = props.queue.map((file, i) => (
-    <li key={i}>
-      <span className="addPhenotype__selected__phenotypes__name">
-        {file.name}
-      </span>
-      <span className="addPhenotype__selected__phenotypes__size">
-        {numeral(file.size).format("0.0 b")}
-      </span>
-      <span className="addPhenotype__selected__phenotypes__modified">
-        Modified {moment(file.lastModified).format("lll")}
-      </span>
-    </li>
-  ));
-
-  return (
-    <div className="addPhenotype__selected">
-      <h5 className="bp3-heading addPhenotype__selected__title">
-        SELECTED FILES
-      </h5>
-      <div className="addPhenotype__selected__phenotypes">
-        <ul className="bp3-list">{items}</ul>
-      </div>
-    </div>
-  );
-};
-
-*/
 
 const log = Logger.prefixLogger("repository");
 
@@ -226,21 +84,115 @@ const PhenotypeItem = ({ item, index, phekb }) => {
   );
 };
 
-PhenotypeItem.propTypes = {
-  item: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
+const handleNodeClick = (
+  node,
+  path,
+  nodeData,
+  phenotypes,
+  setPhenotypes,
+  phekb
+) => {
+  if (path.length == 1) {
+    // clicked a root node
+
+    // This sucks for performance
+    const updated = _.cloneDeep(phenotypes);
+
+    const clickedIndex = phenotypes.findIndex((p) => {
+      return p.summary.nid === node.id;
+    });
+
+    updated[clickedIndex].isExpanded = !phenotypes[clickedIndex].isExpanded;
+
+    setPhenotypes(updated);
+  } else {
+    console.log("Importing...");
+  }
 };
 
-const PhenotypeList = ({ phenotypes, filter, phekb }) => {
+const phenotypesToTreeNodes = (phenotypes, setPhenotypes, phekb) => {
+  const nodes = phenotypes.map((p) => {
+    let children;
+
+    if (p.details?.field_phema_phenotype?.und?.length > 0) {
+      children = p.details.field_phema_phenotype.und.map((file) => {
+        return {
+          id: file.fid,
+          hasCaret: false,
+          icon: "people",
+          label: file.filename,
+          nodeData: file,
+        };
+      });
+    } else {
+      children = [
+        {
+          id: `${p.summary.nid}-children`,
+          hasCaret: false,
+          icon: "issue",
+          label: "No executable phenotype definitions",
+        },
+      ];
+    }
+
+    return {
+      id: p.summary.nid,
+      hasCaret: true,
+      icon: "folder-close",
+      label: p.summary.title,
+      nodeData: p,
+      disabled: !p.accessible,
+      secondaryLabel: !p.accessible ? "private" : undefined,
+      isExpanded: p.isExpanded,
+      childNodes: children,
+    };
+  });
+
+  return nodes;
+};
+
+const PhenotypeList = ({ phenotypes, filter, setPhenotypes, phekb }) => {
   const filtered = phenotypes.filter((p) =>
-    p.title.toUpperCase().includes(filter.toUpperCase())
+    p.summary.title.toUpperCase().includes(filter.toUpperCase())
   );
+
+  const nodes = phenotypesToTreeNodes(filtered, setPhenotypes, phekb);
 
   return (
     <div className="phenotypes__list">
-      {filtered.map((item, index) => (
-        <PhenotypeItem key={index} item={item} index={index} phekb={phekb} />
-      ))}
+      <Tree
+        contents={nodes}
+        onNodeClick={(node, path, nodeData) => {
+          handleNodeClick(
+            node,
+            path,
+            nodeData,
+            phenotypes,
+            setPhenotypes,
+            phekb
+          );
+        }}
+        onNodeExpand={(node, path, nodeData) => {
+          handleNodeClick(
+            node,
+            path,
+            nodeData,
+            phenotypes,
+            setPhenotypes,
+            phekb
+          );
+        }}
+        onNodeCollapse={(node, path, nodeData) => {
+          handleNodeClick(
+            node,
+            path,
+            nodeData,
+            phenotypes,
+            setPhenotypes,
+            phekb
+          );
+        }}
+      />
     </div>
   );
 };
@@ -284,17 +236,53 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
 
     const getData = async () => {
       try {
-        // let list = await phekb.getPhenotypes(20);
-        // log(`Fetched ${list.length} phenotypes`);
-        // const filtered = await findExecutablePhenotypes(list, phekb);
-        // log(`Found ${filtered.length} executable phenotypes`);
-        // setPhenotypes(filtered);
+        const list = await phekb.getPhenotypes(20);
+
+        const wrapped = list.map((p) => {
+          return {
+            summary: p,
+            accessible: true,
+          };
+        });
+
+        setPhenotypes(wrapped);
+
+        return wrapped;
       } catch (err) {
         setError(err);
       }
     };
 
-    getData();
+    const getDetails = async (list) => {
+      console.log("getting deets", list);
+
+      // Get details where possible
+      const promises = list.map((phenotype) => {
+        return phekb
+          .getPhenotypeById(phenotype.summary.nid)
+          .then((details) => {
+            return Promise.resolve(details);
+          })
+          .catch((err) => {
+            return Promise.resolve(err);
+          });
+      });
+
+      const updated = _.cloneDeep(list);
+
+      return Promise.all(promises).then((details) => {
+        details.forEach((detail, idx) => {
+          if (typeof detail == "string") {
+            updated[idx].accessible = false;
+          } else {
+            updated[idx].details = detail;
+          }
+        });
+        setPhenotypes(updated);
+      });
+    };
+
+    getData().then(getDetails);
 
     return;
   }, []);
@@ -308,7 +296,7 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
       />
     );
   } else if (!phenotypes) {
-    return <div></div>; //<Spinner className="phenotypes_loading" />;
+    return <Spinner className="phenotypes_loading" />;
   } else {
     return (
       <div className="phenotypes">
@@ -319,7 +307,12 @@ const PhenotypesRepository: React.FC<PhenotypeRepositoryProps> = ({
           }}
           addText="Add"
         />
-        <PhenotypeList phenotypes={phenotypes} filter={filter} phekb={phekb} />
+        <PhenotypeList
+          phenotypes={phenotypes}
+          filter={filter}
+          setPhenotypes={setPhenotypes}
+          phekb={phekb}
+        />
       </div>
     );
   }
