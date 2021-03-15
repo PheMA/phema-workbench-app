@@ -5,6 +5,7 @@ import { Header, Main, Footer } from "../../components";
 
 import Logger from "@phema/workbench-logger";
 import { emptyPhenotype } from "@phema/phenotype-utils";
+import { readMany } from "graphlib-dot";
 
 const log = Logger.prefixLogger("workbench-app");
 
@@ -63,10 +64,40 @@ const addTerminologyManager = (
 
     setSelectedTab(tabId);
 
-    terminologyManagers.push({ id: tabId, bundle: undefined });
+    terminologyManagers.push({
+      id: tabId, bundle: {
+        resourceType: "Bundle",
+        type: "batch",
+        entry: [],
+      }
+    });
 
     localForage.setItem("terminologyManagers", terminologyManagers).then(() => {
       setTerminologyManagers(terminologyManagers);
+    });
+  });
+};
+
+const saveTerminologyBundle = (
+  localForage,
+  setTerminologyManagers,
+  setSelectedTab
+) => (id, bundle) => {
+  localForage.getItem("terminologyManagers").then((terminologyManagers) => {
+    const newTerminologyManagers = terminologyManagers.map(tm => {
+      if (tm.id == id) {
+        return {
+          id, bundle
+        }
+      } else {
+        return tm;
+      }
+    })
+
+    localForage.setItem("terminologyManagers", newTerminologyManagers).then(() => {
+      setTerminologyManagers(newTerminologyManagers);
+
+      setSelectedTab(id);
     });
   });
 };
@@ -149,6 +180,7 @@ const App = (props) => {
         localForage={localForage}
         cqlScripts={cqlScripts}
         terminologyManagers={terminologyManagers}
+        saveTerminologyBundle={saveTerminologyBundle(localForage, setTerminologyManagers, setSelectedTab)}
         phenotypeManagers={phenotypeManagers}
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}

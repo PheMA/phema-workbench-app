@@ -25,6 +25,7 @@ const Main = (props) => {
     localForage,
     cqlScripts,
     terminologyManagers,
+    saveTerminologyBundle,
     phenotypeManagers,
     selectedTab,
     setSelectedTab,
@@ -82,6 +83,7 @@ const Main = (props) => {
         >
           <Details
             saveLibrary={saveLibrary}
+            saveTerminologyBundle={saveTerminologyBundle}
             tabs={[...cqlScripts, ...terminologyManagers, ...phenotypeManagers]}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}

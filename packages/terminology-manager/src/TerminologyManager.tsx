@@ -77,18 +77,12 @@ const SubmissionErrors: React.FC<SubmissionErrorsProps> = ({ messages }) => {
 };
 
 const TerminologyManager: React.FC<TerminologyManagerProps> = ({
-  terminologyBundle,
+  id,
+  bundle,
+  saveTerminologyBundle,
   fhirServerConnections,
   onSave,
 }) => {
-  const [bundle, setBundle] = useState<R4.IBundle>(
-    terminologyBundle || {
-      resourceType: "Bundle",
-      type: "batch",
-      entry: [],
-    }
-  );
-
   const [selectedSource, setSelectedSource] = useState(undefined);
   const [selectedTarget, setSelectedTarget] = useState(undefined);
   const [currentAction, setCurrentAction] = useState(ActionType.UPLOAD);
@@ -99,7 +93,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
       resource: codeSystem,
     });
 
-    setBundle(newBundle);
+    saveTerminologyBundle(id, newBundle);
   };
 
   const addValueSetBundle = async (
@@ -151,10 +145,10 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
           });
         })
         .then(() => {
-          setBundle(newBundle);
+          saveTerminologyBundle(id, newBundle);
         });
     } else {
-      setBundle(newBundle);
+      saveTerminologyBundle(id, newBundle);
       return Promise.resolve();
     }
   };
@@ -162,7 +156,7 @@ const TerminologyManager: React.FC<TerminologyManagerProps> = ({
   const removeResourceFromBundle = (index) => {
     const newBundle = BundleUtils.removeResourceFromBundle({ bundle, index });
 
-    setBundle(newBundle);
+    saveTerminologyBundle(id, newBundle);
   };
 
   const leftChildren = (

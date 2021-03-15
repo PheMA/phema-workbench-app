@@ -57,14 +57,14 @@ const renderCqlTab = (tab, resized, connections, saveLibrary, selectedTab, setSe
   />
 );
 
-const renderTerminologyManagerTab = (tab, connections, selectedTab, setSelectedTab) => (
-  <Tab
+const renderTerminologyManagerTab = (tab, connections, selectedTab, setSelectedTab, saveTerminologyBundle) => {
+  return <Tab
     key={tab.id}
     id={tab.id}
     title={<TerminologyManagerTabHeader />}
-    panel={<TerminologyManagerWindow connections={connections} />}
+    panel={<TerminologyManagerWindow connections={connections} id={tab.id} bundle={tab.bundle} saveTerminologyBundle={saveTerminologyBundle} />}
   />
-);
+};
 
 const PhenotypeManagerTabHeader = () => (
   <div className="details__phenotypeTabHeader">
@@ -82,20 +82,20 @@ const renderPhenotypeTab = (tab, connections, savePhenotype, selectedTab, setSel
   />
 };
 
-const renderTabs = (tabs, resized, connections, saveLibrary, savePhenotype, selectedTab, setSelectedTab) => {
+const renderTabs = (tabs, resized, connections, saveLibrary, saveTerminologyBundle, savePhenotype, selectedTab, setSelectedTab) => {
   return tabs.map((tab) => {
     if (tab.library !== undefined) {
       return renderCqlTab(tab, resized, connections, saveLibrary, selectedTab, setSelectedTab);
     } else if (tab.type === "phenotype") {
       return renderPhenotypeTab(tab, connections, savePhenotype, selectedTab, setSelectedTab);
     } else {
-      return renderTerminologyManagerTab(tab, connections, selectedTab, setSelectedTab);
+      return renderTerminologyManagerTab(tab, connections, selectedTab, setSelectedTab, saveTerminologyBundle);
     }
   });
 };
 
 const Details = (props) => {
-  const { tabs, resized, connections, saveLibrary, savePhenotype, selectedTab, setSelectedTab } = props;
+  const { tabs, resized, connections, saveLibrary, saveTerminologyBundle, savePhenotype, selectedTab, setSelectedTab } = props;
 
   const title = (
     <div className="details__welcome">
@@ -112,7 +112,7 @@ const Details = (props) => {
         large
       >
         <Tab key="welcome" id="welcome" title={title} panel={<Welcome />} />
-        {renderTabs(tabs, resized, connections, saveLibrary, savePhenotype, selectedTab, setSelectedTab)}
+        {renderTabs(tabs, resized, connections, saveLibrary, saveTerminologyBundle, savePhenotype, selectedTab, setSelectedTab)}
       </Tabs>
     </div>
   );

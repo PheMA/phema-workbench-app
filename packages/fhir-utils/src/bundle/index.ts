@@ -42,7 +42,7 @@ const addResourceToBundle = ({
   method,
   url,
 }: AddResourceToBundleParameters): R4.IBundle => {
-  const newBundle: R4.IBundle = _.cloneDeep(bundle);
+  const newBundle: R4.IBundle = bundle;
 
   if (!newBundle.entry) {
     newBundle.entry = [];
