@@ -3,6 +3,8 @@ import * as SearchUtils from "./search";
 import * as TerminologyUtils from "./terminology";
 import * as FHIRUtils from "./utils";
 import * as LibraryUtils from "./library";
+import * as OperationUtils from "./operations";
+
 import { FHIRConnection } from "./connection.d";
 
 export {
@@ -11,5 +13,6 @@ export {
   TerminologyUtils,
   FHIRUtils,
   LibraryUtils,
+  OperationUtils,
   FHIRConnection,
 };

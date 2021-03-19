@@ -6,6 +6,7 @@
   "dependencies": {
     "@blueprintjs/core": "^3.29.0",
     "@blueprintjs/select": "^3.13.4",
+    "@phema/phenotype-utils": "^1.0.0",
     "react": "^16.13.1"
   }
 }

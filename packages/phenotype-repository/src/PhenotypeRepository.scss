@@ -31,6 +31,19 @@ $colors: (
     overflow-y: scroll;
     overflow-x: hidden;
 
+    &__hasExecutable {
+      .bp3-tree-node-content-0 {
+        .bp3-icon {
+          color: map-get($map: $colors, $key: primary);
+        }
+
+        .bp3-tree-node-label {
+          color: map-get($map: $colors, $key: primary);
+          font-weight: bold;
+        }
+      }
+    }
+
     &__item {
       padding: 5px 5px 0px 5px;
       height: 37px;

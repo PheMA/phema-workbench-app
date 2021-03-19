@@ -117,8 +117,11 @@ const phenotypesToTreeNodes = (
 ) => {
   const nodes = phenotypes.map((p) => {
     let children;
+    let hasComputable = false;
 
     if (p.details?.field_phema_phenotype?.und?.length > 0) {
+      hasComputable = true;
+
       children = p.details.field_phema_phenotype.und.map((file) => {
         return {
           id: file.fid,
@@ -154,6 +157,7 @@ const phenotypesToTreeNodes = (
 
     return {
       id: p.summary.nid,
+      className: hasComputable ? "phenotypes__list__hasExecutable" : "",
       hasCaret: true,
       icon: "folder-close",
       label: p.summary.title,

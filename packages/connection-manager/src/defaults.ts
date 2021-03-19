@@ -126,7 +126,7 @@ const defaultOMOPConnections = () => {
       webApiUrl: "http://omop.phema.science/WebAPI/",
       statementName: "Case",
       source: "OHDSI-CDMV5",
-      parameters: [{ name: "targetDialect", value: "pgsql" }],
+      parameters: [{ name: "targetDialect", value: "postgresql" }],
     },
     {
       name: "PhEMA OMOP Cohort Definition SQL Service",
@@ -136,7 +136,7 @@ const defaultOMOPConnections = () => {
       webApiUrl: "http://omop.phema.science/WebAPI/",
       statementName: "Case",
       source: "OHDSI-CDMV5",
-      parameters: [{ name: "targetDialect", value: "pgsql" }],
+      parameters: [{ name: "targetDialect", value: "postgresql" }],
     },
     {
       name: "Local Docker Cohort Definition SQL Service",
@@ -146,7 +146,7 @@ const defaultOMOPConnections = () => {
       webApiUrl: "http://omop.phema.science/WebAPI/",
       statementName: "Case",
       source: "OHDSI-CDMV5",
-      parameters: [{ name: "targetDialect", value: "pgsql" }],
+      parameters: [{ name: "targetDialect", value: "postgresql" }],
     },
     {
       name: "Local Dev Cohort Definition SQL Service",
@@ -156,7 +156,7 @@ const defaultOMOPConnections = () => {
       webApiUrl: "http://omop.phema.science/WebAPI/",
       statementName: "Case",
       source: "OHDSI-CDMV5",
-      parameters: [{ name: "targetDialect", value: "pgsql" }],
+      parameters: [{ name: "targetDialect", value: "postgresql" }],
     }
   ];
 };

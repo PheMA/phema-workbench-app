@@ -7,6 +7,7 @@
     "@phema/phekb-api": "^1.0.0",
     "@phema/workbench-common": "^1.0.0",
     "@phema/workbench-logger": "^1.0.0",
+    "@phema/phenotype-utils": "^1.0.0",
     "lodash": "^4.17.19",
     "moment": "^2.29.1"
   }

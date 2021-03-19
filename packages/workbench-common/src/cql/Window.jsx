@@ -4,22 +4,7 @@ import SplitPane from "react-split-pane";
 import PhemaWorkbenchApi from "../workbench-api/phema-workbench";
 import { CqlEditor } from "@phema/cql-editor";
 import { Header, CqlResult } from ".";
-
-const buildParametersResource = (params) => {
-  let resource = {
-    resourceType: "Parameters",
-    parameter: [],
-  };
-
-  params.forEach((param) => {
-    resource.parameter.push({
-      name: param.name,
-      valueString: param.value,
-    });
-  });
-
-  return resource;
-};
+import { OperationUtils } from "@phema/fhir-utils";
 
 const getConnectionType = (connections, uuid) => {
   let found = undefined;
@@ -55,7 +40,7 @@ const getConnection = (connections, uuid) => {
   return found;
 };
 
-const execute = (setResult, connections, library) => (connectionId, patientId) => {
+const execute = (setResult, connections, library, log) => (connectionId, patientId) => {
   const connectionType = getConnectionType(connections, connectionId);
   const connection = getConnection(connections, connectionId);
 
@@ -68,7 +53,7 @@ const execute = (setResult, connections, library) => (connectionId, patientId) =
       params.push({ name: "patientId", value: patientId });
     }
 
-    const body = buildParametersResource(params);
+    const body = OperationUtils.buildParametersResource(params);
 
     phemaWorkbenchApi
       .runCQL(connection.fhirBaseUrl, body, {
@@ -78,7 +63,7 @@ const execute = (setResult, connections, library) => (connectionId, patientId) =
         setResult(result);
       })
       .catch((e) => {
-        console.log("Error", e);
+        log(`Error: ${e}`);
       });
   } else {
     let body;
@@ -109,23 +94,46 @@ const execute = (setResult, connections, library) => (connectionId, patientId) =
         setResult(result);
       })
       .catch((e) => {
-        console.log("Error", e);
+        log(`Error: ${e}`);
       });
   }
 };
 
+
+/**
+ * If an external execute function is given, run that, and set the result
+ * accordingly 
+ */
+const externalExecute = (setResult, connections, library, externalExecFunc, log) => (connectionId, patientId) => {
+  const connectionType = getConnectionType(connections, connectionId);
+  const connection = getConnection(connections, connectionId);
+
+  externalExecFunc({ library, connection, connectionType, patientId }).then((result) => {
+    console.log("setting result to ", result);
+
+    setResult(result);
+  })
+    .catch((e) => {
+      log(`Error: ${e}`);
+    });
+}
+
 const CqlWindow = (props) => {
-  const { scriptId, resized, connections, saveLibrary, library } = props;
+  const { scriptId, resized, connections, saveLibrary, library, externalExecFunc, log } = props;
 
   const [result, setResult] = useState(undefined);
 
   const width = result ? "50%" : "100%";
 
+  const execFunc = externalExecFunc
+    ? externalExecute(setResult, connections, library, externalExecFunc, log)
+    : execute(setResult, connections, library, log);
+
   return (
     <div className="cqlWindow__wrapper">
       <Header
         connections={connections}
-        execute={execute(setResult, connections, library)}
+        execute={execFunc}
       />
       <div className="cqlWindow__wrapper__pane">
         <SplitPane
