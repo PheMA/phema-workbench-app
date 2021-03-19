@@ -1,5 +1,5 @@
-import React from 'react';
-import { useRecoilState } from "recoil";
+import React, { useEffect } from 'react';
+import { useRecoilState, useRecoilCallback } from "recoil";
 import _ from "lodash";
 
 import { BundleUtils, LibraryUtils, TerminologyUtils } from "@phema/fhir-utils";
@@ -82,9 +82,11 @@ const Right = ({ log, connections, repoUrl }) => {
     const [bundle, setBundle] = useRecoilState(bundleAtom);
     const [selected, setSelected] = useRecoilState(selectedAtom);
 
-    if (!selected) {
-        return null;
-    }
+    useEffect(() => {
+        const id = BundleUtils.getFirstIdOfType({ bundle, resourceType: "Library" });
+
+        setSelected(id);
+    }, [bundle]);
 
     const resource = BundleUtils.extractResource(bundle, selected);
     let content;

@@ -124,11 +124,30 @@ const bundleContainsResourceWithId = ({
   });
 }
 
+interface GetFirstIdOfTypeParameters {
+  bundle: R4.IBundle,
+  resourceType: string;
+}
+
+const getFirstIdOfType = ({
+  bundle,
+  resourceType
+}: GetFirstIdOfTypeParameters): string => {
+  const entry = bundle?.entry?.find(entry => entry?.resource?.resourceType == resourceType);
+
+  if (entry?.resource) {
+    return entry?.resource?.id;
+  } else {
+    return null;
+  }
+}
+
 export {
   extractResource,
   extractResources,
   addResourceToBundle,
   removeResourceFromBundle,
   collectErrorMessages,
-  bundleContainsResourceWithId
+  bundleContainsResourceWithId,
+  getFirstIdOfType
 };
