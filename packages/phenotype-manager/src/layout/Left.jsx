@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { useRecoilState } from "recoil";
 import { ActionHeader, ListPane } from "@phema/workbench-common";
-import { BundleUtils } from "@phema/fhir-utils";
+import { BundleUtils, LibraryUtils } from "@phema/fhir-utils";
 
 import { PhenotypeToaster } from "../PhenotypeToaster";
 
@@ -34,6 +34,8 @@ const processFiles = async (log, bundle, setBundle, files) => {
         // TODO: handle errors
 
         if (!BundleUtils.bundleContainsResourceWithId({ bundle: newBundle, id: resource.id })) {
+            log(`Adding resource ${resource.id} to bundle`);
+
             newBundle = BundleUtils.addResourceToBundle({ bundle: newBundle, resource });
         } else {
             log(`Phenotype already includes resource with id ${resource.id}`);
@@ -77,14 +79,7 @@ const processFiles = async (log, bundle, setBundle, files) => {
                     icon: "tick",
                 })
             } else if (["ValueSet", "Library"].includes(resource.resourceType)) {
-                const message = processResource(log, resource);
-
-                PhenotypeToaster.show({
-                    message,
-                    intent: Intent.SUCCESS,
-                    icon: "tick",
-                })
-
+                processResource(log, resource);
             } else {
                 PhenotypeToaster.show({
                     message: `File ${file.name} does not contain a Library, ValueSet or Bundle resource.`,
@@ -98,9 +93,26 @@ const processFiles = async (log, bundle, setBundle, files) => {
     setBundle(newBundle);
 }
 
+const newLibrary = ({ log, bundle, setBundle }) => () => {
+    const newLib = LibraryUtils.newEmptyLibrary();
+
+    log(`Adding new library with id '${newLib.id}'`);
+
+    const newBundle = BundleUtils.addResourceToBundle({
+        bundle,
+        resource: newLib,
+        method: 'PUT',
+        url: `Library/${newLib.id}`
+    });
+
+    setBundle(newBundle);
+};
+
 const Left = ({ log }) => {
     const [bundle, setBundle] = useRecoilState(bundleAtom);
     const [selected, setSelected] = useRecoilState(selectedAtom);
+
+    console.log("LEFT RENDERING", bundle);
 
     const onDrop = useCallback(acceptedFiles => {
         processFiles(log, bundle, setBundle, acceptedFiles);
@@ -110,7 +122,7 @@ const Left = ({ log }) => {
     return (
         <div className={`phenotypeManager__left ${isDragActive ? "dragActive" : ""}`} {...getRootProps()}>
             <input {...getInputProps()} />
-            <ActionHeader title="Logic Libraries" addAction={open} addText={"Add"} />
+            <ActionHeader title="Logic Libraries" addAction={newLibrary({ log, bundle, setBundle })} addText={"New"} />
             <div className="phenotypeManager__left__libraries">
                 <ListPane
                     onNodeClick={onNodeClick(log, setSelected)}

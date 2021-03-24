@@ -49,7 +49,12 @@ const bundleToTreeNodes = (
     if (entry.resource?.resourceType === resourceType) {
       nodes.push({
         id: entry.resource?.id,
-        label: <NodeLabel title={entry.resource?.name} subtitle={subtitle} />,
+        label: (
+          <NodeLabel
+            title={entry.resource?.name || "Unnamed"}
+            subtitle={subtitle}
+          />
+        ),
         icon: itemIcon || "th",
         isSelected: selectedId === entry.resource?.id,
         secondaryLabel: (
