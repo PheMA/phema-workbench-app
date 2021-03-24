@@ -5,7 +5,7 @@ import _ from "lodash";
 import { BundleUtils, LibraryUtils, TerminologyUtils } from "@phema/fhir-utils";
 import { CqlWindow, ValueSet, PhemaWorkbenchApi } from "@phema/workbench-common";
 
-import { extractIdFromLibrary } from "@phema/phenotype-utils";
+import { extractIdFromLibrary, updateLibrary } from "@phema/phenotype-utils";
 import { OperationUtils } from "@phema/fhir-utils";
 
 import LibraryPane from '../panes/LibraryPane';
@@ -18,8 +18,14 @@ const resized = () => {
         .dispatchEvent(new Event("phema-workbench-resized"));
 };
 
-const saveLibrary = (log) => (library) => {
-    log("Saving library");
+const saveLibrary = ({ bundle, setBundle, log }) => (libraryId, cql) => {
+    log(`Saving library ${libraryId}`);
+
+    const newBundle = _.cloneDeep(bundle);
+
+    updateLibrary({ bundle: newBundle, libraryId, cql });
+
+    setBundle(newBundle);
 }
 
 const executePhenotype = async ({ bundle, connection, connectionType, library, patientId, log }) => {
@@ -99,7 +105,7 @@ const Right = ({ log, connections, repoUrl }) => {
             scriptId={resource.id}
             resized={resized}
             connections={connections}
-            saveLibrary={_.debounce(saveLibrary(log), 2000)}
+            saveLibrary={_.debounce(saveLibrary({ bundle, setBundle, log }), 2000)}
             library={library}
             externalExecFunc={({ library, connection, connectionType, patientId }) => {
                 return executePhenotype({ bundle, connection, connectionType, library, patientId, log })

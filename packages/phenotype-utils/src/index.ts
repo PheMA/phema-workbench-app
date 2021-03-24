@@ -21,3 +21,18 @@ export const extractIdFromLibrary = ({ library }) => {
 export const preparePhenotypeComposition = ({ bundle, entryPointId }) => {
     console.log("meh");
 }
+
+export const updateLibrary = ({ bundle, libraryId, cql }) => {
+    bundle?.entry?.forEach(entry => {
+        if (entry?.resource?.id === libraryId) {
+            // Clear all previous content
+            entry.resource.content = [];
+
+            // Add the next cql
+            entry.resource.content.push({
+                "contentType": "text/cql",
+                data: btoa(cql)
+            })
+        }
+    });
+}
