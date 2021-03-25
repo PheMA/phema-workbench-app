@@ -5,7 +5,8 @@
   "module": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "@ahryman40k/ts-fhir-types": "^4.0.32"
+    "@ahryman40k/ts-fhir-types": "^4.0.32",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "typescript": "^4.1.3"

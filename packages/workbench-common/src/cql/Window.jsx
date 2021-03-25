@@ -109,8 +109,6 @@ const externalExecute = (setResult, connections, library, externalExecFunc, log)
   const connection = getConnection(connections, connectionId);
 
   externalExecFunc({ library, connection, connectionType, patientId }).then((result) => {
-    console.log("setting result to ", result);
-
     setResult(result);
   })
     .catch((e) => {

@@ -9,6 +9,7 @@ import { extractIdFromLibrary, updateLibrary } from "@phema/phenotype-utils";
 import { OperationUtils } from "@phema/fhir-utils";
 
 import LibraryPane from '../panes/LibraryPane';
+import { preparePhenotypeBundle } from "./Main";
 
 import { bundleAtom, selectedAtom } from "../state/atoms";
 
@@ -21,9 +22,11 @@ const resized = () => {
 const saveLibrary = ({ bundle, setBundle, log }) => (libraryId, cql) => {
     log(`Saving library ${libraryId}`);
 
-    const newBundle = _.cloneDeep(bundle);
+    let newBundle = _.cloneDeep(bundle);
 
     updateLibrary({ bundle: newBundle, libraryId, cql });
+
+    newBundle = preparePhenotypeBundle({ bundle: newBundle, log });
 
     setBundle(newBundle);
 }

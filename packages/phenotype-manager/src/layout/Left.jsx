@@ -8,15 +8,19 @@ import { ActionHeader, ListPane } from "@phema/workbench-common";
 import { BundleUtils, LibraryUtils } from "@phema/fhir-utils";
 
 import { PhenotypeToaster } from "../PhenotypeToaster";
+import { preparePhenotypeBundle } from "./Main";
 
 import { bundleAtom, selectedAtom } from "../state/atoms";
 
 import { Intent } from "@blueprintjs/core";
 
+
 const removeResourceFromBundle = (log, bundle, setBundle) => (index, id) => {
     log(`Removing resource ${id} from phenotype bundle`);
 
-    const newBundle = BundleUtils.removeResourceFromBundle({ bundle, index });
+    let newBundle = BundleUtils.removeResourceFromBundle({ bundle, index });
+
+    newBundle = preparePhenotypeBundle({ bundle: newBundle, log });
 
     setBundle(newBundle);
 }
@@ -90,6 +94,8 @@ const processFiles = async (log, bundle, setBundle, files) => {
         }
     }
 
+    newBundle = preparePhenotypeBundle({ bundle: newBundle, log });
+
     setBundle(newBundle);
 }
 
@@ -98,12 +104,14 @@ const newLibrary = ({ log, bundle, setBundle }) => () => {
 
     log(`Adding new library with id '${newLib.id}'`);
 
-    const newBundle = BundleUtils.addResourceToBundle({
+    let newBundle = BundleUtils.addResourceToBundle({
         bundle,
         resource: newLib,
         method: 'PUT',
         url: `Library/${newLib.id}`
     });
+
+    newBundle = preparePhenotypeBundle({ bundle: newBundle, log });
 
     setBundle(newBundle);
 };
@@ -111,8 +119,6 @@ const newLibrary = ({ log, bundle, setBundle }) => () => {
 const Left = ({ log }) => {
     const [bundle, setBundle] = useRecoilState(bundleAtom);
     const [selected, setSelected] = useRecoilState(selectedAtom);
-
-    console.log("LEFT RENDERING", bundle);
 
     const onDrop = useCallback(acceptedFiles => {
         processFiles(log, bundle, setBundle, acceptedFiles);
