@@ -96,8 +96,20 @@ export const preparePhenotypeComposition = ({ bundle, entryPointId }) => {
 }
 
 export const updateLibrary = ({ bundle, libraryId, cql }) => {
+    let name = "Unknown";
+
+    try {
+        name = extractIdFromLibrary({ library: cql });
+    } catch (err) {
+        /* noop */
+    }
+
+
     bundle?.entry?.forEach(entry => {
         if (entry?.resource?.id === libraryId) {
+            // Update the name
+            entry.resource.name = name;
+
             // Clear all previous content
             entry.resource.content = [];
 
