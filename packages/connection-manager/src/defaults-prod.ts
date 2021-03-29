@@ -47,7 +47,7 @@ const defaultOMOPConnections = () => {
       webApiUrl: "http://omop.phema.science/WebAPI/",
       statementName: "Case",
       source: "OHDSI-CDMV5",
-      parameters: [{ name: "targetDialect", value: "postgresql" }],
+      parameters: [{ name: "targetDialect", value: "sql server" }],
     }
   ];
 };
