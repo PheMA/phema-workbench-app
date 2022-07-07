@@ -24,7 +24,7 @@
     "jsoneditor-react": "^2.0.0",
     "localforage": "^1.7.3",
     "lodash": "^4.17.19",
-    "moment": "^2.23.0",
+    "moment": "^2.29.4",
     "numeral": "^2.0.6",
     "prism-react-renderer": "^1.0.2",
     "prop-types": "^15.6.2",
